@@ -1,0 +1,37 @@
+schema_version = "0.1"
+
+[workspace]
+name = "{{ name }}"
+description = "Private control plane for AI-assisted research operations."
+timezone = "{{ timezone }}"
+default_dashboard = "dashboards/today.md"
+
+[harness]
+package = "kansei"
+engine = "kansei"
+update_channel = "stable"
+template_version = "{{ template_version }}"
+
+[privacy]
+default_visibility = "private"
+allow_public_export = false
+sanitize_before_feedback = true
+
+[safety]
+default_apply_requires_confirmation = true
+protect_user_files = true
+require_git_clean_for_apply = true
+hpc_submit_requires_explicit_approval = true
+remote_write_requires_explicit_approval = true
+
+[codex]
+enabled = true
+default_profile = "kansei"
+target_delegation = "codex-exec"
+
+[mcp]
+enabled = {{ "true" if with_mcp else "false" }}
+default_transport = "stdio"
+http_bind_host = "127.0.0.1"
+http_port = 18764
+

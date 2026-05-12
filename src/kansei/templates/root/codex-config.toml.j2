@@ -1,0 +1,43 @@
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[mcp_servers.kansei]
+command = "kansei"
+args = ["mcp", "serve", "--transport", "stdio"]
+cwd = "."
+startup_timeout_sec = 20
+tool_timeout_sec = 120
+enabled = true
+required = true
+
+[mcp_servers.paperops]
+command = "pops"
+args = ["mcp", "serve", "--transport", "stdio"]
+startup_timeout_sec = 20
+tool_timeout_sec = 120
+enabled = true
+required = false
+
+[mcp_servers.runops_hpc]
+url = "http://127.0.0.1:18765/mcp"
+bearer_token_env_var = "RUNOPS_HPC_MCP_TOKEN"
+startup_timeout_sec = 20
+tool_timeout_sec = 180
+enabled = true
+required = false
+enabled_tools = [
+  "runops.health",
+  "runops.project.status",
+  "runops.run.list",
+  "runops.run.inspect",
+  "runops.run.logs",
+  "runops.slurm.queue",
+  "runops.job.plan_submit",
+]
+disabled_tools = [
+  "runops.job.submit",
+  "runops.job.cancel",
+  "runops.run.delete",
+  "runops.fs.delete",
+]
+

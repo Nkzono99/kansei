@@ -1,0 +1,27 @@
+schema_version = "0.1"
+
+[providers.kansei]
+type = "local"
+mode = "cli"
+command = "kansei"
+
+[providers.generic_code]
+type = "local"
+mode = "cli"
+command = "git"
+
+[providers.paperops]
+type = "mcp"
+mode = "stdio"
+command = "pops"
+args = ["mcp", "serve", "--transport", "stdio"]
+required = false
+
+[providers.runops_hpc]
+type = "mcp"
+mode = "streamable-http"
+url = "http://127.0.0.1:18765/mcp"
+ssh_tunnel = "hpc-login:18765:127.0.0.1:18765"
+token_env = "RUNOPS_HPC_MCP_TOKEN"
+required = false
+

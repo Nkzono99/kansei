@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kansei"
+version = "0.1.0"
+description = "Private local control plane for AI-assisted research operations"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "Kansei contributors" },
+]
+dependencies = [
+  "typer>=0.12",
+  "rich>=13.0",
+  "pydantic>=2.0",
+  "tomli-w>=1.0",
+  "tomlkit>=0.13",
+  "jinja2>=3.1",
+  "jsonschema>=4.0",
+  "mcp[cli]>=1.0",
+  "tzdata>=2025.2; platform_system == 'Windows'",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.6",
+  "mypy>=1.8",
+]
+
+[project.scripts]
+kansei = "kansei.cli.main:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/kansei"]
+include = [
+  "src/kansei/templates/**/*.j2",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["kansei"]

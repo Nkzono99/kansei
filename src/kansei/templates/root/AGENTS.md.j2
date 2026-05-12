@@ -1,0 +1,12 @@
+# AGENTS.md
+
+This is a private Kansei control plane. Treat it as orchestration state, not as
+a monorepo for downstream projects.
+
+- Read project and provider state before planning changes.
+- Use `kansei` CLI or MCP tools for persistent Kansei state changes.
+- Do not directly reorganize registered project roots from this workspace.
+- Keep `knowledge/`, `projects.toml`, and `providers.toml` private.
+- Plan before apply, and avoid destructive or remote-write actions unless the
+  user explicitly asks for them.
+

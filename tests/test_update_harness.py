@@ -1,0 +1,52 @@
+from __future__ import annotations
+
+from typer.testing import CliRunner
+
+from kansei.cli.main import app
+from kansei.core.instance import init_instance
+from kansei.update.applier import apply_update
+from kansei.update.planner import plan_update
+
+
+def test_update_harness_dry_run_noop_on_fresh_instance(tmp_path) -> None:
+    root = init_instance(tmp_path / "kansei", with_codex=True)
+
+    result = CliRunner().invoke(app, ["update-harness", "--root", str(root)])
+
+    assert result.exit_code == 0
+    assert "up to date" in result.stdout
+
+
+def test_update_harness_creates_missing_managed_file(tmp_path) -> None:
+    root = init_instance(tmp_path / "kansei")
+    (root / "KANSEI.md").unlink()
+
+    plan = plan_update(root)
+    assert any(action.path == "KANSEI.md" and action.action == "create" for action in plan.actions)
+
+    apply_update(plan)
+    assert (root / "KANSEI.md").exists()
+
+
+def test_update_harness_writes_new_for_user_modified_managed_file(tmp_path) -> None:
+    root = init_instance(tmp_path / "kansei")
+    original = (root / "AGENTS.md").read_text(encoding="utf-8")
+    (root / "AGENTS.md").write_text(original + "\nLocal note.\n", encoding="utf-8")
+
+    result = CliRunner().invoke(app, ["update-harness", "--root", str(root), "--apply"])
+
+    assert result.exit_code == 0
+    assert (root / "AGENTS.md.new").exists()
+    assert (root / "AGENTS.md").read_text(encoding="utf-8").endswith("Local note.\n")
+
+
+def test_update_harness_does_not_touch_user_owned_registry(tmp_path) -> None:
+    root = init_instance(tmp_path / "kansei")
+    projects = root / "projects.toml"
+    projects.write_text(projects.read_text(encoding="utf-8") + "\n# user note\n", encoding="utf-8")
+
+    result = CliRunner().invoke(app, ["update-harness", "--root", str(root), "--apply"])
+
+    assert result.exit_code == 0
+    assert "# user note" in projects.read_text(encoding="utf-8")
+    assert not (root / "projects.toml.new").exists()
