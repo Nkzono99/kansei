@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/kansei/lock.schema.json",
+  "title": "Kansei managed file lock",
+  "type": "object",
+  "required": ["schema_version", "managed_files"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "0.1" },
+    "managed_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "template", "version", "checksum", "owner", "class"],
+        "additionalProperties": false,
+        "properties": {
+          "path": { "type": "string" },
+          "template": { "type": "string" },
+          "version": { "type": "string" },
+          "checksum": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+          "owner": { "type": "string" },
+          "class": { "enum": ["managed", "generated"] }
+        }
+      }
+    }
+  }
+}

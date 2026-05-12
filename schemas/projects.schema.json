@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/kansei/projects.schema.json",
+  "title": "Kansei project registry",
+  "type": "object",
+  "required": ["schema_version", "projects"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "0.1" },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "kind", "provider", "location", "path"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "kind": {
+            "enum": ["management", "paper", "experiment", "code", "reading", "admin", "other"]
+          },
+          "provider": { "type": "string", "minLength": 1 },
+          "location": { "enum": ["local", "ssh", "cloud", "external"] },
+          "path": { "type": "string", "minLength": 1 },
+          "host": { "type": "string" },
+          "priority": { "enum": ["A", "B", "C", "hold"] },
+          "active": { "type": "boolean" },
+          "codex_profile": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

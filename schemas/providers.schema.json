@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/kansei/providers.schema.json",
+  "title": "Kansei provider registry",
+  "type": "object",
+  "required": ["schema_version", "providers"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "0.1" },
+    "providers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type", "mode"],
+        "additionalProperties": true,
+        "properties": {
+          "type": { "enum": ["local", "mcp", "ssh", "external"] },
+          "mode": { "type": "string", "minLength": 1 },
+          "command": { "type": "string" },
+          "args": { "type": "array", "items": { "type": "string" } },
+          "url": { "type": "string" },
+          "ssh_tunnel": { "type": "string" },
+          "token_env": { "type": "string" },
+          "required": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

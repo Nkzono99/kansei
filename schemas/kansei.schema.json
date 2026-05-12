@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/kansei/kansei.schema.json",
+  "title": "Kansei workspace config",
+  "type": "object",
+  "required": ["schema_version"],
+  "additionalProperties": true,
+  "properties": {
+    "schema_version": { "const": "0.1" },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "timezone": { "type": "string" },
+        "default_dashboard": { "type": "string" }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "default_visibility": { "enum": ["private", "internal", "public"] },
+        "allow_public_export": { "type": "boolean" },
+        "sanitize_before_feedback": { "type": "boolean" }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "default_apply_requires_confirmation": { "type": "boolean" },
+        "protect_user_files": { "type": "boolean" },
+        "require_git_clean_for_apply": { "type": "boolean" },
+        "hpc_submit_requires_explicit_approval": { "type": "boolean" },
+        "remote_write_requires_explicit_approval": { "type": "boolean" }
+      }
+    }
+  }
+}

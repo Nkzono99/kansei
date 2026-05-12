@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/kansei/manifest.schema.json",
+  "title": "Kansei instance manifest",
+  "type": "object",
+  "required": ["schema_version", "instance", "harness", "paths", "policy"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "0.1" },
+    "instance": { "type": "object", "additionalProperties": true },
+    "harness": { "type": "object", "additionalProperties": true },
+    "paths": { "type": "object", "additionalProperties": { "type": "string" } },
+    "policy": { "type": "object", "additionalProperties": true }
+  }
+}
