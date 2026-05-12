@@ -8,6 +8,8 @@ private local control plane for AI-assisted research operations.
 - Treat this repo as public package code. Do not add private project data, HPC
   credentials, unpublished notes, API keys, tokens, or local-only collaborator
   details.
+- Assume other agents may be editing the repo at the same time. Check the
+  current diff before editing and do not revert unrelated changes.
 - Keep target project state in target projects. Kansei stores registries,
   provider configuration, dashboard views, knowledge references, prompts,
   runbooks, and MCP access.
@@ -26,10 +28,23 @@ private local control plane for AI-assisted research operations.
 - Package source lives under `src/kansei`.
 - CLI commands live under `src/kansei/cli/commands`.
 - Templates for private instances live under `src/kansei/templates`.
+- The Codex agent skill lives under `.agents/skills/kansei-control-plane`.
+  Keep `SKILL.md` concise; put procedural detail in `references/` and only add
+  deterministic helpers in `scripts/` when they reduce repeated manual work.
 - Tests live under `tests` and should use temporary directories for generated
   Kansei instances.
 - Use structured TOML parsing/writing APIs. Avoid ad hoc string rewriting of
   registries or lock files.
+
+## Agent Workflow
+
+1. Inspect the repo state and relevant files before planning edits.
+2. For Kansei instance work, use the `kansei-control-plane` skill as the
+   procedural harness and prefer CLI previews over direct file edits.
+3. Keep generated/demo instances under `.tmp/` or another disposable directory.
+4. Do not contact remote providers, submit or cancel HPC work, delete/archive
+   remote files, or rewrite manuscripts unless the user explicitly asks for that
+   action in the current task.
 
 ## Validation
 
@@ -48,9 +63,9 @@ uv run --directory . kansei doctor --root .tmp/kansei-demo
 uv run --directory . kansei update-harness --root .tmp/kansei-demo
 ```
 
-## Harness
+## Agent Harness
 
 The repo includes a versioned Codex skill at
-`harness/skills/kansei-control-plane`. Use it as the procedural harness for
+`.agents/skills/kansei-control-plane`. Use it as the procedural harness for
 working on private Kansei instances without leaking private state back into the
 public package.
