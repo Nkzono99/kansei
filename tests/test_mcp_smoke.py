@@ -2,6 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from typer.testing import CliRunner
+
+from kansei.cli.main import app
+from kansei.core.instance import init_instance
+from kansei.mcp.config import inspect_mcp_config, plan_codex_config, write_codex_config
 from kansei.mcp.server import FallbackMCP, KanseiMCPHandlers, build_server
 
 
@@ -106,3 +111,37 @@ def test_build_server_registers_mvp_tools_and_resources(tmp_path: Path) -> None:
         assert "paper-demo" in server.read_resource("kansei://workspace/projects")
     else:
         assert server is not None
+
+
+def test_codex_mcp_config_is_generated_from_providers(tmp_path: Path) -> None:
+    root = init_instance(tmp_path / "kansei", with_mcp=True)
+
+    plan = plan_codex_config(root)
+
+    assert "[mcp_servers.kansei]" in plan.content
+    assert "[mcp_servers.paperops]" in plan.content
+    assert "[mcp_servers.runops_hpc]" in plan.content
+    assert 'url = "http://127.0.0.1:18765/mcp"' in plan.content
+    assert 'bearer_token_env_var = "RUNOPS_HPC_MCP_TOKEN"' in plan.content
+    assert 'runops.job.submit' in plan.content
+
+    path = write_codex_config(plan, force=True)
+    assert path == root / ".codex" / "config.toml"
+    assert inspect_mcp_config(root)["mcp_servers"]["runops_hpc"]["mode"] == "streamable-http"
+
+
+def test_mcp_config_and_inspect_commands(tmp_path: Path) -> None:
+    root = init_instance(tmp_path / "kansei", with_mcp=True)
+    runner = CliRunner()
+
+    preview = runner.invoke(app, ["mcp", "config", "--root", str(root)])
+    assert preview.exit_code == 0
+    assert "[mcp_servers.kansei]" in preview.stdout
+
+    write = runner.invoke(app, ["mcp", "config", "--root", str(root), "--write", "--force"])
+    assert write.exit_code == 0
+    assert (root / ".codex" / "config.toml").exists()
+
+    inspect = runner.invoke(app, ["mcp", "inspect", "--root", str(root)])
+    assert inspect.exit_code == 0
+    assert '"runops_hpc"' in inspect.stdout
