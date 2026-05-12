@@ -58,7 +58,7 @@ uv run kansei version
 For init/update work, also run:
 
 ```powershell
-uv run kansei init .tmp/kansei-demo --git --with-codex --with-mcp
+uv run kansei init .tmp/kansei-demo --git --with-codex --with-mcp --no-bootstrap
 uv run --directory . kansei doctor --root .tmp/kansei-demo
 uv run --directory . kansei update-harness --root .tmp/kansei-demo
 ```

@@ -15,7 +15,14 @@ surface without requiring private project data.
 From the public package repository:
 
 ```powershell
-uv run kansei init .tmp/kansei-demo --git --with-codex --with-mcp
+$kanseiSource = (Get-Location).Path
+uv run kansei init .tmp/kansei-demo --git --with-codex --with-mcp --kansei-install-spec $kanseiSource
+```
+
+From PyPI, no prior install is required:
+
+```powershell
+uvx --from kansei kansei init .tmp/kansei-demo --git --with-codex --with-mcp
 ```
 
 This writes a private control-plane layout under `.tmp/kansei-demo`:
@@ -28,10 +35,17 @@ This writes a private control-plane layout under `.tmp/kansei-demo`:
 - `.kansei/manifest.toml` and `.kansei/lock.toml`: package-managed metadata for
   safe updates.
 - `.codex/config.toml`: generated only when `--with-codex` is passed.
+- `.venv/`: local Kansei environment, ignored by git.
 
 The generated instance is private workspace state. Do not copy real local paths,
 credentials, unpublished notes, or collaborator-specific details back into the
 public package repository.
+
+`uvx --from kansei` uses a temporary environment to run the command. The init
+bootstrap then creates `.venv` inside the instance and installs Kansei there so
+future commands can run from the generated workspace. Use `--no-bootstrap` to
+skip this step, or `--kansei-install-spec C:\path\to\kansei` when bootstrapping
+from a local checkout.
 
 If HarnessOps is available as `hops`, initialization also runs
 `hops init --profile generic-code` inside the generated instance. When working
@@ -61,6 +75,7 @@ Most commands discover the nearest Kansei instance from the current directory:
 
 ```powershell
 Set-Location .tmp/kansei-demo
+.venv\Scripts\activate
 uv run --directory ..\.. kansei project list
 uv run --directory ..\.. kansei status
 uv run --directory ..\.. kansei dashboard today
@@ -68,7 +83,8 @@ uv run --directory ..\.. kansei dashboard today
 
 The examples below use `uv run --directory ..\..` when they assume your current
 directory is `.tmp/kansei-demo`. If `kansei` is installed in your environment,
-you can omit that prefix and run `kansei ...` directly.
+or after activating `.venv`, you can omit that prefix and run `kansei ...`
+directly.
 
 When running from somewhere else, use command-specific root flags where
 available, for example `kansei doctor --root PATH`, `kansei update-harness

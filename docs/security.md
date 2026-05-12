@@ -18,6 +18,7 @@ The default implementation favors read and plan operations. Actions requiring
 explicit user intent include:
 
 - writing user-owned files
+- creating or updating the instance-local `.venv`
 - overwriting generated `.codex/config.toml`
 - remote writes
 - Slurm submit/cancel/delete

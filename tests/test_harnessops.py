@@ -89,6 +89,7 @@ def test_init_command_chains_harnessops(tmp_path, monkeypatch) -> None:
         [
             "init",
             str(tmp_path / "kansei-home"),
+            "--no-bootstrap",
             "--harnessops-profile",
             "python-package",
             "--with-harnessops-agent-bridge",
@@ -119,7 +120,10 @@ def test_init_command_can_skip_harnessops(tmp_path, monkeypatch) -> None:
         lambda *args, **kwargs: pytest.fail("hops should not run"),
     )
 
-    result = CliRunner().invoke(app, ["init", str(tmp_path / "kansei-home"), "--no-harnessops"])
+    result = CliRunner().invoke(
+        app,
+        ["init", str(tmp_path / "kansei-home"), "--no-harnessops", "--no-bootstrap"],
+    )
 
     assert result.exit_code == 0, result.stdout
 

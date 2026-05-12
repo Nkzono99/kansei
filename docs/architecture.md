@@ -47,6 +47,8 @@ PATH/
 
 The instance stores operational metadata and local knowledge. It does not absorb
 target project source trees, manuscripts, Slurm outputs, or provider-owned state.
+`kansei init` also creates an ignored `.venv` by default so the instance can run
+its own `kansei` command after bootstrap.
 
 ## State Boundaries
 

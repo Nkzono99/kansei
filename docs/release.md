@@ -9,6 +9,7 @@ safe harness updates, backups, and a read/plan-oriented MCP surface.
 Implemented:
 
 - `kansei init` for creating private local instances from package templates.
+- init bootstrap for `.venv` creation and project-local Kansei installation.
 - `kansei doctor` for layout, TOML, registry, and managed-file checks.
 - `kansei project` commands for listing, showing, adding, opening, and checking
   registered projects.

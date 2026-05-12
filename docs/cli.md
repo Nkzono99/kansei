@@ -7,6 +7,8 @@ or any subcommand's `--help` for the exact current Typer output.
 
 ```powershell
 kansei init PATH [--git] [--with-codex] [--with-mcp] [--force]
+  [--bootstrap/--no-bootstrap] [--kansei-install-spec SPEC]
+  [--require-bootstrap]
   [--harnessops/--no-harnessops] [--harnessops-profile PROFILE]
   [--with-harnessops-agent-bridge] [--require-harnessops]
 kansei doctor [--root PATH] [--json] [--check-mcp] [--check-codex]
@@ -20,6 +22,24 @@ kansei backup [--root PATH] [--output PATH]
 kansei migrate [--root PATH] [--json]
 kansei version
 ```
+
+## Bootstrap
+
+`kansei init` creates `.venv` in the generated instance and installs
+`kansei==<current-version>` into it by default. This makes the common first run:
+
+```powershell
+uvx --from kansei kansei init ~/work/kansei
+cd ~/work/kansei
+.venv\Scripts\activate
+kansei doctor
+```
+
+`uvx --from kansei` installs Kansei into a temporary execution environment only.
+The init bootstrap is the step that installs Kansei into the project-local
+`.venv`. Use `--no-bootstrap` to skip it, `--require-bootstrap` to fail on
+bootstrap problems, or `--kansei-install-spec PATH_OR_PACKAGE_SPEC` for local
+development checkouts.
 
 ## HarnessOps Chaining
 

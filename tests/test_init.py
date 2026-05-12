@@ -4,12 +4,25 @@ import tomllib
 
 from typer.testing import CliRunner
 
+from kansei.cli.commands import init as init_command
 from kansei.cli.main import app
+from kansei.core.bootstrap import BootstrapResult
 
 
 def test_init_creates_private_instance_layout(tmp_path) -> None:
     target = tmp_path / "kansei-home"
-    result = CliRunner().invoke(app, ["init", str(target), "--git", "--with-codex", "--with-mcp"])
+    result = CliRunner().invoke(
+        app,
+        [
+            "init",
+            str(target),
+            "--git",
+            "--with-codex",
+            "--with-mcp",
+            "--no-bootstrap",
+            "--no-harnessops",
+        ],
+    )
 
     assert result.exit_code == 0, result.stdout
     for path in (
@@ -43,14 +56,17 @@ def test_init_refuses_non_empty_non_instance(tmp_path) -> None:
     target.mkdir()
     (target / "note.txt").write_text("already here", encoding="utf-8")
 
-    result = CliRunner().invoke(app, ["init", str(target)])
+    result = CliRunner().invoke(app, ["init", str(target), "--no-bootstrap", "--no-harnessops"])
 
     assert result.exit_code != 0
 
 
 def test_backup_and_migrate_commands(tmp_path) -> None:
     target = tmp_path / "kansei-home"
-    init_result = CliRunner().invoke(app, ["init", str(target), "--with-mcp"])
+    init_result = CliRunner().invoke(
+        app,
+        ["init", str(target), "--with-mcp", "--no-bootstrap", "--no-harnessops"],
+    )
     assert init_result.exit_code == 0
 
     backup_result = CliRunner().invoke(app, ["backup", "--root", str(target)])
@@ -61,3 +77,40 @@ def test_backup_and_migrate_commands(tmp_path) -> None:
     migrate_result = CliRunner().invoke(app, ["migrate", "--root", str(target), "--json"])
     assert migrate_result.exit_code == 0
     assert '"pending": []' in migrate_result.stdout
+
+
+def test_init_bootstraps_local_venv_by_default(tmp_path, monkeypatch) -> None:
+    calls: list[tuple[str, bool]] = []
+
+    def fake_bootstrap(root, *, install_spec: str, required: bool):  # type: ignore[no-untyped-def]
+        calls.append((install_spec, required))
+        return BootstrapResult(
+            created=(".venv", f"uv pip install {install_spec}"),
+            skipped=(),
+            warnings=(),
+            activation_hint=".venv\\Scripts\\activate",
+        )
+
+    monkeypatch.setattr(init_command, "bootstrap_environment", fake_bootstrap)
+
+    result = CliRunner().invoke(app, ["init", str(tmp_path / "kansei-home"), "--no-harnessops"])
+
+    assert result.exit_code == 0, result.stdout
+    assert calls == [("kansei==0.1.0", False)]
+    assert "Bootstrap: created .venv" in result.stdout
+    assert "Bootstrap next: .venv\\Scripts\\activate" in result.stdout
+
+
+def test_init_can_skip_bootstrap(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(
+        init_command,
+        "bootstrap_environment",
+        lambda *args, **kwargs: (_ for _ in ()).throw(AssertionError("bootstrap should not run")),
+    )
+
+    result = CliRunner().invoke(
+        app,
+        ["init", str(tmp_path / "kansei-home"), "--no-bootstrap", "--no-harnessops"],
+    )
+
+    assert result.exit_code == 0, result.stdout

@@ -5,6 +5,12 @@ from typing import Annotated
 
 import typer
 
+from kansei.core.bootstrap import (
+    DEFAULT_INSTALL_SPEC,
+    BootstrapError,
+    BootstrapResult,
+    bootstrap_environment,
+)
 from kansei.core.harnessops import (
     DEFAULT_PROJECT_PROFILE,
     HarnessOpsError,
@@ -32,6 +38,21 @@ def init(
     force: Annotated[
         bool,
         typer.Option("--force", help="Allow initializing an existing instance."),
+    ] = False,
+    bootstrap: Annotated[
+        bool,
+        typer.Option(
+            "--bootstrap/--no-bootstrap",
+            help="Create .venv and install Kansei into the generated instance.",
+        ),
+    ] = True,
+    kansei_install_spec: Annotated[
+        str,
+        typer.Option("--kansei-install-spec", help="Package spec installed into .venv."),
+    ] = DEFAULT_INSTALL_SPEC,
+    require_bootstrap: Annotated[
+        bool,
+        typer.Option("--require-bootstrap", help="Fail if .venv bootstrap cannot complete."),
     ] = False,
     harnessops: Annotated[
         bool,
@@ -72,6 +93,19 @@ def init(
         force=force,
     )
     typer.echo(f"Initialized Kansei instance at {root}")
+    if bootstrap:
+        try:
+            _echo_bootstrap_result(
+                bootstrap_environment(
+                    root,
+                    install_spec=kansei_install_spec,
+                    required=require_bootstrap,
+                )
+            )
+        except BootstrapError as exc:
+            typer.echo(str(exc), err=True)
+            raise typer.Exit(1) from exc
+
     if not harnessops:
         return
     try:
@@ -96,3 +130,13 @@ def _echo_harnessops_result(result: HarnessOpsResult) -> None:
             typer.echo(result.stderr.rstrip(), err=True)
         return
     typer.echo(f"HarnessOps: skipped hops {' '.join(result.args)} ({result.reason})")
+
+
+def _echo_bootstrap_result(result: BootstrapResult) -> None:
+    for path in result.created:
+        typer.echo(f"Bootstrap: created {path}")
+    for path in result.skipped:
+        typer.echo(f"Bootstrap: skipped {path}")
+    for warning in result.warnings:
+        typer.echo(f"Bootstrap warning: {warning}", err=True)
+    typer.echo(f"Bootstrap next: {result.activation_hint}")
