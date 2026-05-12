@@ -136,3 +136,16 @@ def test_project_open_status_and_provider_connect_commands(tmp_path, monkeypatch
     connect_result = CliRunner().invoke(app, ["provider", "connect", "runops_hpc", "--tunnel"])
     assert connect_result.exit_code == 0
     assert "ssh -N -L 18765:127.0.0.1:18765 hpc-login" in connect_result.stdout
+
+
+def test_delegate_command_prints_safe_plan(tmp_path, monkeypatch) -> None:
+    root = init_instance(tmp_path / "kansei", with_mcp=True)
+    monkeypatch.chdir(root)
+
+    result = CliRunner().invoke(app, ["delegate", "kansei", "summarize status"])
+
+    assert result.exit_code == 0
+    assert "mode: plan" in result.stdout
+    assert "requires_approval: true" in result.stdout
+    assert "codex exec --cd" in result.stdout
+    assert "summarize status" in result.stdout

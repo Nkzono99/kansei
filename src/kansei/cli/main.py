@@ -3,7 +3,7 @@ from __future__ import annotations
 import typer
 
 from kansei import __version__
-from kansei.cli.commands import dashboard, init, mcp, project, provider
+from kansei.cli.commands import dashboard, delegate, init, mcp, project, provider
 from kansei.cli.commands import doctor as doctor_command
 from kansei.cli.commands import search as search_command
 from kansei.cli.commands import status as status_command
@@ -22,6 +22,7 @@ app.command("init")(init.init)
 app.command()(doctor_command.doctor)
 app.command()(status_command.status)
 app.command()(search_command.search)
+app.command()(delegate.delegate)
 app.command("update-harness")(update_command.update_harness)
 
 
