@@ -1,62 +1,60 @@
 # MCP
 
-Kansei exposes read-only and plan-oriented MCP tools with the `kansei.` prefix.
-The CLI remains the source of truth for state changes.
+Kansei は `kansei.` prefix の read-only / plan-oriented MCP tool を公開します。
+状態変更の正本は引き続き CLI です。
 
-## Serving
+## 起動
 
-Local Codex clients normally use stdio:
+ローカルの Codex client では通常 stdio を使います。
 
 ```powershell
 kansei mcp serve --transport stdio
 ```
 
-HTTP mode is available for local or SSH-tunneled use:
+HTTP mode は local use または SSH tunnel 経由の利用に使えます。
 
 ```powershell
 kansei mcp serve --transport streamable-http --host 127.0.0.1 --port 18764
 ```
 
-The default host is loopback. Do not expose HTTP MCP on a public interface
-without a separate access-control plan.
+既定の host は loopback です。別途 access-control plan が無い限り、HTTP MCP を
+public interface に公開しないでください。
 
-## Codex Config
+## Codex config
 
-Preview generated config:
+生成される config を preview します。
 
 ```powershell
 kansei mcp config
 ```
 
-Write `.codex/config.toml` from `providers.toml`:
+`providers.toml` から `.codex/config.toml` を書きます。
 
 ```powershell
 kansei mcp config --write --force
 ```
 
-Inspect generated MCP surfaces:
+生成される MCP surface を確認します。
 
 ```powershell
 kansei mcp inspect
 ```
 
-## Tools
+## MCP tool
 
-- `kansei.health`: workspace root, version, and basic warnings.
-- `kansei.project.list`: project summaries with optional `active`, `kind`, and
-  `priority` filters.
-- `kansei.project.inspect`: full registry entry plus safety policy for one
-  project.
-- `kansei.workspace.status`: aggregate project/provider status.
-- `kansei.knowledge.search`: scoped search over local knowledge surfaces.
-- `kansei.dashboard.plan_today`: dashboard markdown plan without writing files.
+- `kansei.health`: workspace root、version、基本 warning。
+- `kansei.project.list`: 任意の `active`, `kind`, `priority` filter 付き project summary。
+- `kansei.project.inspect`: 1 つの project の registry entry と safety policy。
+- `kansei.workspace.status`: project/provider status の集約。
+- `kansei.knowledge.search`: local knowledge をスコープ指定で検索。
+- `kansei.dashboard.plan_today`: file を書かずに dashboard Markdown plan を返す。
 
-## Resources
+## MCP resource
 
 - `kansei://workspace/projects`
 - `kansei://workspace/providers`
 
-## Safety
+## 安全性
 
-Current MCP tools do not submit jobs, delete files, rewrite manuscripts, or write
-remote state. Dashboard planning returns markdown and `writes_files: false`.
+現在の MCP tool は job submit、file delete、manuscript rewrite、remote state write を
+行いません。dashboard planning は Markdown を返し、`writes_files: false` です。

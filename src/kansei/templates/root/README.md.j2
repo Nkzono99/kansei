@@ -1,19 +1,17 @@
 # {{ name }}
 
-Private Kansei control plane instance.
+これは private な Kansei control plane instance です。
 
-This workspace keeps local project registry, provider registry, dashboards,
-runbooks, prompts, and private knowledge. Project source trees remain in their
-own repositories.
+この workspace は local project registry、provider registry、dashboard、runbook、prompt、
+private knowledge を保持します。project source tree はそれぞれのリポジトリに残します。
 
-Activate the local environment created by `kansei init`:
+`kansei init` が作成した local environment を activate します。
 
 ```powershell
 .venv\Scripts\activate
 kansei doctor
 ```
 
-If HarnessOps was available during `kansei init`, this instance also has a
-`harness-feedback/` overlay managed by `hops`. Update it through
-`kansei update-harness` or `hops update-harness`; do not manually restructure
-`.harnessops/` or `harness-feedback/`.
+`kansei init` 実行時に HarnessOps が利用できた場合、この instance には `hops` が管理する
+`harness-feedback/` overlay もあります。更新は `kansei update-harness` または
+`hops update-harness` で行い、`.harnessops/` や `harness-feedback/` を手で組み替えないでください。

@@ -1,11 +1,11 @@
-# Publishing
+# 公開手順
 
-Kansei is published to PyPI as `kansei`.
+Kansei は `kansei` という package 名で PyPI に公開します。
 
-## Release Flow
+## リリース手順
 
-1. Update `version` in `pyproject.toml`.
-2. Run local checks:
+1. `pyproject.toml` の `version` を更新します。
+2. ローカルで check を実行します。
 
    ```powershell
    uv run --extra dev pytest -q
@@ -14,14 +14,14 @@ Kansei is published to PyPI as `kansei`.
    uv build
    ```
 
-3. Push the release commit.
-4. Create a GitHub Release such as `v0.1.0`.
-5. `.github/workflows/publish-pypi.yml` builds distributions and publishes them
-   to PyPI through Trusted Publishing.
+3. release commit を push します。
+4. `v0.1.0` のような GitHub Release を作成します。
+5. `.github/workflows/publish-pypi.yml` が distribution をビルドし、Trusted Publishing
+   経由で PyPI に公開します。
 
-## Trusted Publisher Settings
+## Trusted Publisher 設定
 
-PyPI Trusted Publisher Management should use:
+PyPI Trusted Publisher Management には次を登録します。
 
 - Publisher: GitHub Actions
 - PyPI project name: `kansei`
@@ -30,4 +30,4 @@ PyPI Trusted Publisher Management should use:
 - Workflow filename: `publish-pypi.yml`
 - Environment name: `pypi`
 
-No PyPI API token is required for this workflow.
+この workflow では PyPI API token は不要です。

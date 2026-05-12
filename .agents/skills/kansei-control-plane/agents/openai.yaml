@@ -1,4 +1,4 @@
 interface:
   display_name: "Kansei Control Plane"
-  short_description: "Operate Kansei instances safely"
-  default_prompt: "Use $kansei-control-plane to inspect a Kansei instance, plan safe changes, and avoid direct target-project edits."
+  short_description: "Kansei instance を安全に扱う"
+  default_prompt: "$kansei-control-plane を使って Kansei instance を確認し、安全な変更を計画し、target project の直接編集を避けてください。"

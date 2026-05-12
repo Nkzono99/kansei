@@ -1,66 +1,63 @@
-# Provider Contract
+# Provider contract
 
-Providers let Kansei inspect or plan work for registered projects without
-owning the domain state itself.
+provider は、Kansei が domain state を所有せずに、登録済み project を確認したり、
+作業計画を作ったりするための境界です。
 
-## Data Models
+## データモデル
 
-`ProjectRef` contains the registry data a provider needs:
+`ProjectRef` には provider が必要とする registry data が入ります。
 
 - `id`, `name`, `kind`, `provider`, `location`, `path`
-- optional `host`, `priority`, `active`, `tags`, `notes`
+- optional: `host`, `priority`, `active`, `tags`, `notes`
 
-Provider methods return:
+provider method は次を返します。
 
-- `ProviderHealth`: provider ID, status, summary, warnings.
-- `ProjectStatus`: project ID, provider ID, status, summary, warnings, next
-  actions, details.
-- `delegate_plan`: a command plan that is safe to inspect before execution.
+- `ProviderHealth`: provider ID、status、summary、warning。
+- `ProjectStatus`: project ID、provider ID、status、summary、warning、次のアクション、details。
+- `delegate_plan`: 実行前に確認できる安全な command plan。
 
-## Built-In Providers
+## 組み込み provider
 
-- `generic-code`: uses `git` for local worktree status.
-- `kansei`: uses the generic-code behavior for the control-plane repository.
-- `harnessops`, `paperops`, `runops`: v0.1 domain adapters that report CLI
-  availability and produce safe delegation plans. They do not implement full
-  domain writes.
+- `generic-code`: local worktree status の確認に `git` を使います。
+- `kansei`: control-plane リポジトリに対して `generic-code` と同じ挙動を使います。
+- `harnessops`, `paperops`, `runops`: v0.1 の domain adapter です。CLI availability を
+  報告し、安全な delegation plan を作ります。domain write の完全実装はまだ行いません。
 
-## Registry Resolution
+## Registry 解決順序
 
-Provider resolution is:
+provider resolution の順序は次のとおりです。
 
-1. explicit provider config in `providers.toml`
+1. `providers.toml` の explicit provider config
 2. built-in provider adapter
 3. `generic-code` fallback
 
-Future releases may add entry-point based provider plugins.
+将来のリリースでは、entry point ベースの provider plugin を追加する可能性があります。
 
-## Registry Fields
+## Registry フィールド
 
-Provider records live in `providers.toml` under `[providers.<id>]`. Supported
-`type` values are `local`, `mcp`, `ssh`, and `external`. Local and SSH providers
-require `command`; MCP stdio providers require `command`; non-stdio MCP
-providers require `url`. Optional fields include `args`, `ssh_tunnel`,
-`token_env`, and `required`.
+provider record は `providers.toml` の `[providers.<id>]` に置きます。対応する `type` は
+`local`, `mcp`, `ssh`, `external` です。local provider と SSH provider には `command` が
+必要です。MCP stdio provider にも `command` が必要です。stdio ではない MCP provider には
+`url` が必要です。任意フィールドには `args`, `ssh_tunnel`, `token_env`, `required` があります。
 
-## Safety Classes
+## 安全性の分類
 
-Providers should implement read/status/doctor/delegation planning first. Remote
-writes, HPC submit/cancel/delete, archive/delete, and manuscript rewrite flows
-must require explicit approval and should not be hidden behind status commands.
+provider は read/status/doctor/delegation planning を先に実装します。remote write、
+HPC submit/cancel/delete、archive/delete、manuscript rewrite は明示的な承認を必要とし、
+status command の裏で隠れて実行されてはいけません。
 
-## SSH Tunnels
+## SSH tunnel
 
-`providers.toml` can declare:
+`providers.toml` では次のように宣言できます。
 
 ```toml
 ssh_tunnel = "hpc-login:18765:127.0.0.1:18765"
 ```
 
-`kansei provider connect runops_hpc --tunnel` prints:
+`kansei provider connect runops_hpc --tunnel` は次を表示します。
 
 ```powershell
 ssh -N -L 18765:127.0.0.1:18765 hpc-login
 ```
 
-Use `--exec` only when a foreground tunnel should actually be started.
+実際に foreground tunnel を開始したい場合だけ `--exec` を使います。

@@ -1,61 +1,53 @@
 # AGENTS.md
 
-This repository builds `kansei`, a public Python package and CLI that maintains a
-private local control plane for AI-assisted research operations.
+このリポジトリは `kansei` を開発します。`kansei` は、AI 支援の研究運用向けに
+private local control plane を保守する公開 Python package / CLI です。
 
-## Ground Rules
+## 基本ルール
 
-- Treat this repo as public package code. Do not add private project data, HPC
-  credentials, unpublished notes, API keys, tokens, or local-only collaborator
-  details.
-- Assume other agents may be editing the repo at the same time. Check the
-  current diff before editing and do not revert unrelated changes.
-- Keep target project state in target projects. Kansei stores registries,
-  provider configuration, dashboard views, knowledge references, prompts,
-  runbooks, and MCP access.
-- Keep read/plan/apply separate. Preview changes before applying them, and never
-  overwrite user-owned instance files such as `projects.toml`, `providers.toml`,
-  `knowledge/`, or `dashboards/today.md`.
-- Prefer the `kansei` CLI as the state-changing surface. MCP and Codex workflows
-  should call or mirror CLI behavior instead of inventing a second source of
-  truth.
-- When adding provider behavior, implement a safe read/status/plan path first.
-  Remote write, HPC submit/cancel, delete/archive, and manuscript rewrite flows
-  must require explicit approval.
+- このリポジトリは公開パッケージのコードとして扱います。private project data、HPC credential、
+  未公開 note、API key、token、ローカル collaborator 固有の情報を追加しないでください。
+- 他の agent が同時に編集している可能性があります。編集前に現在の diff を確認し、無関係な変更を
+  revert しないでください。
+- target project の状態は target project 側に残します。Kansei は registry、provider config、
+  dashboard view、knowledge reference、prompt、runbook、MCP access を保存します。
+- read / plan / apply を分けます。適用前に preview し、`projects.toml`, `providers.toml`,
+  `knowledge/`, `dashboards/today.md` などの user-owned instance file を上書きしないでください。
+- 状態変更の入り口として `kansei` CLI を優先します。MCP と Codex workflow は、別の
+  source of truth を作らず、CLI の挙動を呼ぶか mirror してください。
+- provider の挙動を追加するときは、まず安全な read/status/plan path を実装します。remote write、
+  HPC submit/cancel、delete/archive、manuscript rewrite は明示的な承認を必須にしてください。
 
-## Implementation Conventions
+## 実装規約
 
-- Package source lives under `src/kansei`.
-- CLI commands live under `src/kansei/cli/commands`.
-- Templates for private instances live under `src/kansei/templates`.
-- The Codex agent skill lives under `.agents/skills/kansei-control-plane`.
-  Keep `SKILL.md` concise; put procedural detail in `references/` and only add
-  deterministic helpers in `scripts/` when they reduce repeated manual work.
-- Tests live under `tests` and should use temporary directories for generated
-  Kansei instances.
-- Use structured TOML parsing/writing APIs. Avoid ad hoc string rewriting of
-  registries or lock files.
+- package source は `src/kansei` に置きます。
+- CLI command は `src/kansei/cli/commands` に置きます。
+- private instance 用 template は `src/kansei/templates` に置きます。
+- Codex agent skill は `.agents/skills/kansei-control-plane` にあります。`SKILL.md` は簡潔に保ち、
+  手順の詳細は `references/`、繰り返し使う deterministic helper は `scripts/` に置きます。
+- test は `tests` に置き、生成する Kansei instance には temporary directory を使います。
+- TOML の読み書きには structured API を使います。registry や lock file を ad hoc な文字列処理で
+  書き換えないでください。
 
-## Agent Workflow
+## Agent ワークフロー
 
-1. Inspect the repo state and relevant files before planning edits.
-2. For Kansei instance work, use the `kansei-control-plane` skill as the
-   procedural harness and prefer CLI previews over direct file edits.
-3. Keep generated/demo instances under `.tmp/` or another disposable directory.
-4. Do not contact remote providers, submit or cancel HPC work, delete/archive
-   remote files, or rewrite manuscripts unless the user explicitly asks for that
-   action in the current task.
+1. 計画や編集の前にリポジトリの状態と関連 file を確認します。
+2. Kansei instance 作業では `kansei-control-plane` skill を procedural harness として使い、
+   直接 file を編集するより CLI preview を優先します。
+3. 生成/demo instance は `.tmp/` または別の disposable directory に置きます。
+4. current task でユーザーが明示しない限り、remote provider への接続、HPC job の submit/cancel、
+   remote file の delete/archive、manuscript rewrite は行いません。
 
-## Validation
+## 検証
 
-Run the smallest meaningful checks after edits:
+編集後は、意味のある最小限の check を実行します。
 
 ```powershell
 uv run pytest -q
 uv run kansei version
 ```
 
-For init/update work, also run:
+init/update 関連の作業では、さらに次を実行します。
 
 ```powershell
 uv run kansei init .tmp/kansei-demo --git --with-codex --with-mcp --no-bootstrap
@@ -63,9 +55,8 @@ uv run --directory . kansei doctor --root .tmp/kansei-demo
 uv run --directory . kansei update-harness --root .tmp/kansei-demo
 ```
 
-## Agent Harness
+## Agent ハーネス
 
-The repo includes a versioned Codex skill at
-`.agents/skills/kansei-control-plane`. Use it as the procedural harness for
-working on private Kansei instances without leaking private state back into the
-public package.
+このリポジトリには `.agents/skills/kansei-control-plane` に version 管理された Codex skill があります。
+private Kansei instance を扱うとき、private state を public package に漏らさないための
+procedural harness として使ってください。

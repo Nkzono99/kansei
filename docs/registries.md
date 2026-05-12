@@ -1,11 +1,11 @@
-# Registries
+# Registry
 
-Kansei uses TOML registries in each private instance. They are user-owned files:
-`update-harness` does not overwrite them.
+Kansei は各 private instance の中で TOML registry を使います。これらは user-owned file です。
+`update-harness` は上書きしません。
 
 ## `projects.toml`
 
-Example:
+例:
 
 ```toml
 schema_version = "0.1"
@@ -22,23 +22,23 @@ active = true
 tags = ["control-plane"]
 ```
 
-Required fields:
+必須フィールド:
 
-- `id`: stable CLI/MCP identifier
-- `name`: human-readable name
-- `kind`: `management`, `paper`, `experiment`, `code`, `reading`, `admin`, or `other`
-- `provider`: provider ID from `providers.toml` or a built-in provider
-- `location`: `local`, `ssh`, `cloud`, or `external`
-- `path`: local or remote project path
+- `id`: CLI/MCP で使う安定した識別子
+- `name`: 人が読むための名前
+- `kind`: `management`, `paper`, `experiment`, `code`, `reading`, `admin`, `other`
+- `provider`: `providers.toml` の provider ID または built-in provider
+- `location`: `local`, `ssh`, `cloud`, `external`
+- `path`: local または remote の project path
 
-Optional fields:
+任意フィールド:
 
-- `host`: required for `location = "ssh"`
-- `priority`: `A`, `B`, `C`, or `hold` (default `C`)
-- `active`: included in dashboards/status when true (default true)
+- `host`: `location = "ssh"` の場合に必要
+- `priority`: `A`, `B`, `C`, `hold`。既定は `C`
+- `active`: true の場合、dashboard/status に含めます。既定は true
 - `codex_profile`, `tags`, `notes`
 
-Use `kansei project add` for simple additions:
+単純な追加には `kansei project add` を使います。
 
 ```powershell
 kansei project add --id demo --name Demo --kind code --provider generic-code --location local --path .
@@ -46,7 +46,7 @@ kansei project add --id demo --name Demo --kind code --provider generic-code --l
 
 ## `providers.toml`
 
-Example:
+例:
 
 ```toml
 schema_version = "0.1"
@@ -72,20 +72,20 @@ token_env = "RUNOPS_HPC_MCP_TOKEN"
 required = false
 ```
 
-Provider fields:
+provider フィールド:
 
-- `type`: `local`, `mcp`, `ssh`, or `external`
-- `mode`: `cli`, `stdio`, or `streamable-http`
-- `command`: required for local providers and stdio MCP providers
-- `args`: optional command arguments
-- `url`: required for non-stdio MCP providers
+- `type`: `local`, `mcp`, `ssh`, `external`
+- `mode`: `cli`, `stdio`, `streamable-http`
+- `command`: local provider と stdio MCP provider で必要
+- `args`: 任意の command argument
+- `url`: stdio ではない MCP provider で必要
 - `ssh_tunnel`: `host:local_port:remote_host:remote_port`
-- `token_env`: environment variable for bearer token lookup
-- `required`: whether missing/unhealthy provider should be treated as required
+- `token_env`: bearer token を読む環境変数
+- `required`: missing/unhealthy provider を必須扱いにするかどうか
 
-## Schemas
+## Schema
 
-Public schemas live in `schemas/`:
+公開 schema は `schemas/` にあります。
 
 - `kansei.schema.json`
 - `projects.schema.json`

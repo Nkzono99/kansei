@@ -1,13 +1,12 @@
 # AGENTS.md
 
-This is a private Kansei control plane. Treat it as orchestration state, not as
-a monorepo for downstream projects.
+これは private な Kansei control plane です。downstream project の monorepo ではなく、
+orchestration state を管理する workspace として扱ってください。
 
-- Read project and provider state before planning changes.
-- Use `kansei` CLI or MCP tools for persistent Kansei state changes.
-- Do not directly reorganize registered project roots from this workspace.
-- Do not directly reorganize `.harnessops/` or `harness-feedback/`; use `hops`
-  through `kansei init`, `kansei update-harness`, or the HarnessOps CLI.
-- Keep `knowledge/`, `projects.toml`, and `providers.toml` private.
-- Plan before apply, and avoid destructive or remote-write actions unless the
-  user explicitly asks for them.
+- 変更計画の前に project と provider の状態を読んでください。
+- Kansei の永続的な状態変更には `kansei` CLI または MCP tool を使ってください。
+- 登録済み project root をこの workspace から直接再編しないでください。
+- `.harnessops/` や `harness-feedback/` を直接再編しないでください。`kansei init`,
+  `kansei update-harness`, HarnessOps CLI 経由の `hops` を使います。
+- `knowledge/`, `projects.toml`, `providers.toml` は private に保ってください。
+- apply の前に plan し、破壊的操作や remote write はユーザーが明示した場合だけ行ってください。

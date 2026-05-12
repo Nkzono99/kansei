@@ -1,36 +1,32 @@
 ---
 name: kansei-control-plane
-description: Operate Kansei private local control-plane instances safely. Use when Codex is working inside or against a Kansei instance root; needs to inspect, initialize, doctor, or update a Kansei harness; review project/provider registries; plan dashboards, knowledge search, MCP exposure, or delegation; or avoid leaking private target-project state back into the public kansei package.
+description: Kansei の private local control-plane instance を安全に扱う。Codex が Kansei instance root の中またはそれを対象に作業するとき、instance の inspect/init/doctor/update、project/provider registry の確認、dashboard planning、knowledge search、MCP exposure、delegation planning、または private target-project state を public kansei package に漏らさない判断が必要なときに使う。
 ---
 
 # Kansei Control Plane
 
-## Core Rule
+## 基本ルール
 
-Treat a Kansei root as a control plane, not a place to directly reorganize
-target projects. Read first, plan second, apply only through the `kansei` CLI or
-an explicitly approved safe write path.
+Kansei root は control plane として扱い、target project を直接再編する場所として扱わないでください。
+まず読み、次に計画し、適用は `kansei` CLI または明示承認された safe write path だけで行います。
 
-## Workflow
+## ワークフロー
 
-1. Locate the instance root by finding both `kansei.toml` and
-   `.kansei/manifest.toml`.
-2. Run read-only checks before proposing writes:
+1. `kansei.toml` と `.kansei/manifest.toml` の両方を見つけて instance root を確認します。
+2. write を提案する前に read-only check を実行します。例:
    `kansei doctor`, `kansei project list`, `kansei provider list`,
-   `kansei status`, `kansei dashboard today`, or
-   `scripts/check_instance.py <instance-root>`.
-3. Classify the files you may touch. Treat `projects.toml`, `providers.toml`,
-   `knowledge/`, `dashboards/today.md`, `.env`, and `.secrets/` as user-owned.
-4. Preview harness updates with `kansei update-harness`. Use `--apply` only
-   when the user requested the update and the preview is understood.
-5. For target-project work, change cwd to the target project or delegate through
-   the configured provider. Do not make target-project edits from the Kansei
-   root.
-6. Keep MCP/provider work read-only or plan-only by default. Remote writes, HPC
-   submit/cancel, delete/archive, and manuscript rewrite actions require
-   explicit approval in the current task.
+   `kansei status`, `kansei dashboard today`,
+   `scripts/check_instance.py <instance-root>`。
+3. 触ってよい file を分類します。`projects.toml`, `providers.toml`,
+   `knowledge/`, `dashboards/today.md`, `.env`, `.secrets/` は user-owned として扱います。
+4. harness update は `kansei update-harness` で preview します。ユーザーが update を依頼し、
+   preview を理解できている場合だけ `--apply` を使います。
+5. target-project 作業では cwd を target project に移すか、設定済み provider に委譲します。
+   Kansei root から target-project file を直接編集しないでください。
+6. MCP/provider 作業は既定で read-only または plan-only にします。remote write、HPC
+   submit/cancel、delete/archive、manuscript rewrite は current task での明示承認が必要です。
 
-## Common Commands
+## よく使うコマンド
 
 ```powershell
 Push-Location <instance-root>
@@ -45,9 +41,9 @@ uv run kansei mcp inspect --root <instance-root>
 Pop-Location
 ```
 
-## Bundled Resources
+## 同梱リソース
 
-- Read `references/control-plane-workflow.md` when ownership, preview/apply
-  boundaries, delegation, or MCP safety is ambiguous.
-- Run `scripts/check_instance.py <instance-root>` for a deterministic
-  no-import structural check before operating on an unfamiliar instance.
+- ownership、preview/apply 境界、delegation、MCP safety が曖昧な場合は
+  `references/control-plane-workflow.md` を読みます。
+- 初見の instance を扱う前に、package import なしで構造を確認したい場合は
+  `scripts/check_instance.py <instance-root>` を実行します。

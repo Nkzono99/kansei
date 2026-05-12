@@ -1,9 +1,9 @@
-# CLI Reference
+# CLI リファレンス
 
-This page describes the implemented v0.1 command surface. Use `kansei --help`
-or any subcommand's `--help` for the exact current Typer output.
+このページは v0.1 で実装されているコマンド体系を説明します。正確な最新の
+Typer 出力は `kansei --help` または各 subcommand の `--help` を確認してください。
 
-## Top-Level Commands
+## トップレベルコマンド
 
 ```powershell
 kansei init PATH [--git] [--with-codex] [--with-mcp] [--force]
@@ -25,8 +25,8 @@ kansei version
 
 ## Bootstrap
 
-`kansei init` creates `.venv` in the generated instance and installs
-`kansei==<current-version>` into it by default. This makes the common first run:
+`kansei init` は生成した instance 内に `.venv` を作り、既定で
+`kansei==<current-version>` をインストールします。一般的な初回実行は次の形です。
 
 ```powershell
 uvx --from kansei kansei init ~/work/kansei
@@ -35,27 +35,27 @@ cd ~/work/kansei
 kansei doctor
 ```
 
-`uvx --from kansei` installs Kansei into a temporary execution environment only.
-The init bootstrap is the step that installs Kansei into the project-local
-`.venv`. Use `--no-bootstrap` to skip it, `--require-bootstrap` to fail on
-bootstrap problems, or `--kansei-install-spec PATH_OR_PACKAGE_SPEC` for local
-development checkouts.
+`uvx --from kansei` がインストールするのは一時的な execution environment だけです。
+project-local な `.venv` に Kansei をインストールするのは init bootstrap の役割です。
+bootstrap を省くには `--no-bootstrap`、bootstrap 問題を command failure にするには
+`--require-bootstrap` を使います。local development checkout からインストールする場合は
+`--kansei-install-spec PATH_OR_PACKAGE_SPEC` を指定します。
 
-## HarnessOps Chaining
+## HarnessOps 連鎖
 
-`kansei init` chains to `hops init --profile generic-code` by default when the
-`hops` command is available. `kansei update-harness` chains to
-`hops update-harness`; dry runs use `hops update-harness --dry-run`, and older
-instances without `.harnessops/project.toml` first receive a `hops init` dry run
-or apply, matching the Kansei command mode.
+`hops` command が利用できる場合、`kansei init` は既定で
+`hops init --profile generic-code` に連鎖します。`kansei update-harness` は
+`hops update-harness` に連鎖します。dry-run では `hops update-harness --dry-run` を使い、
+`.harnessops/project.toml` が無い古い instance では、Kansei 側の command mode に
+合わせて `hops init` の dry-run または apply を先に実行します。
 
-Use `--no-harnessops` to skip the chained call. Use `--require-harnessops` when
-automation should fail instead of warning if `hops` cannot be found. If `hops`
-is not on `PATH`, set `KANSEI_HOPS_COMMAND` or set `KANSEI_HARNESSOPS_SOURCE` to
-a local HarnessOps checkout so Kansei can run `uvx --isolated --from <source>
-hops ...`.
+連鎖を省くには `--no-harnessops` を使います。`hops` が見つからないときに warning では
+なくコマンドを失敗扱いにしたい automation では `--require-harnessops` を指定します。
+`hops` が `PATH` に無い場合は、`KANSEI_HOPS_COMMAND` または
+`KANSEI_HARNESSOPS_SOURCE` に local HarnessOps checkout を設定してください。Kansei は
+`uvx --isolated --from <source> hops ...` を実行できます。
 
-## Project Commands
+## Project 系コマンド
 
 ```powershell
 kansei project list [--active/--no-active] [--kind KIND] [--priority PRIORITY]
@@ -66,10 +66,10 @@ kansei project status PROJECT_ID
 kansei project doctor PROJECT_ID
 ```
 
-`project add` writes `projects.toml` because the user explicitly requested a
-registry edit. Duplicate project IDs are rejected.
+`project add` は、ユーザーが registry edit を明示しているため `projects.toml` を書きます。
+重複した project ID は拒否されます。
 
-## Provider Commands
+## Provider 系コマンド
 
 ```powershell
 kansei provider list
@@ -78,19 +78,19 @@ kansei provider connect PROVIDER_ID [--tunnel] [--exec]
 kansei provider disconnect PROVIDER_ID
 ```
 
-`provider connect --tunnel` prints an SSH tunnel command by default. It starts a
-foreground tunnel only with `--exec`.
+`provider connect --tunnel` は既定では SSH tunnel command を表示します。実際に
+foreground tunnel を開始するのは `--exec` が指定された場合だけです。
 
-## Dashboard Commands
+## Dashboard 系コマンド
 
 ```powershell
 kansei dashboard today [--write]
 kansei dashboard weekly [--write]
 ```
 
-Preview is the default. Writing requires `--write`.
+既定は preview です。書き込みには `--write` が必要です。
 
-## MCP Commands
+## MCP 系コマンド
 
 ```powershell
 kansei mcp serve --transport stdio
@@ -99,11 +99,11 @@ kansei mcp config [--root PATH] [--write] [--force]
 kansei mcp inspect [--root PATH]
 ```
 
-`mcp config` renders `.codex/config.toml` from `providers.toml`. Existing
-differing config requires `--force` to overwrite.
+`mcp config` は `providers.toml` から `.codex/config.toml` を render します。既存の
+config と差分がある場合、上書きには `--force` が必要です。
 
-## Exit Behavior
+## 終了時の挙動
 
-Commands raise non-zero exits for validation errors, missing projects/providers,
-or unsafe writes. v0.1 keeps destructive and remote-write actions outside the
-default command surface.
+validation error、存在しない project/provider、unsafe write は non-zero exit になります。
+v0.1 では破壊的操作と remote write を既定のコマンド体系の外に
+置いています。

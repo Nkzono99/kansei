@@ -1,77 +1,72 @@
-# Get Started
+# はじめに
 
-This guide creates a throwaway Kansei instance and exercises the v0.1 CLI
-surface without requiring private project data.
+このガイドでは、private project data を使わずに、使い捨ての Kansei instance を作り
+v0.1 CLI surface を試します。
 
-## Requirements
+## 必要なもの
 
-- Python 3.11 or newer.
-- `uv` for local development commands in this repository.
-- Optional: `git`, if you want `kansei init --git` to create a repository for
-  the private instance.
+- Python 3.11 以降。
+- このリポジトリで local development command を実行するための `uv`。
+- 任意: private instance に git リポジトリを作りたい場合は `git`。
 
-## Create an instance
+## Instance を作成する
 
-From the public package repository:
+公開 package リポジトリから実行する場合:
 
 ```powershell
 $kanseiSource = (Get-Location).Path
 uv run kansei init .tmp/kansei-demo --git --with-codex --with-mcp --kansei-install-spec $kanseiSource
 ```
 
-From PyPI, no prior install is required:
+PyPI から実行する場合、事前インストールは不要です。
 
 ```powershell
 uvx --from kansei kansei init .tmp/kansei-demo --git --with-codex --with-mcp
 ```
 
-This writes a private control-plane layout under `.tmp/kansei-demo`:
+これにより `.tmp/kansei-demo` 配下に private control-plane layout が作られます。
 
-- `kansei.toml`: instance settings and safety policy.
-- `projects.toml`: project registry.
-- `providers.toml`: provider registry.
-- `knowledge/`, `runbooks/`, `prompts/`, `dashboards/`: private operating
-  surfaces.
-- `.kansei/manifest.toml` and `.kansei/lock.toml`: package-managed metadata for
-  safe updates.
-- `.codex/config.toml`: generated only when `--with-codex` is passed.
-- `.venv/`: local Kansei environment, ignored by git.
+- `kansei.toml`: instance 設定と safety policy。
+- `projects.toml`: project registry。
+- `providers.toml`: provider registry。
+- `knowledge/`, `runbooks/`, `prompts/`, `dashboards/`: private な運用領域。
+- `.kansei/manifest.toml` と `.kansei/lock.toml`: safe update 用の package-managed metadata。
+- `.codex/config.toml`: `--with-codex` を渡した場合だけ生成されます。
+- `.venv/`: local Kansei environment。git 管理外です。
 
-The generated instance is private workspace state. Do not copy real local paths,
-credentials, unpublished notes, or collaborator-specific details back into the
-public package repository.
+生成された instance は private workspace state です。実在する local path、credential、
+未公開 note、collaborator 固有の情報を公開 package リポジトリに戻さないでください。
 
-`uvx --from kansei` uses a temporary environment to run the command. The init
-bootstrap then creates `.venv` inside the instance and installs Kansei there so
-future commands can run from the generated workspace. Use `--no-bootstrap` to
-skip this step, or `--kansei-install-spec C:\path\to\kansei` when bootstrapping
-from a local checkout.
+`uvx --from kansei` は一時 environment で command を実行します。その後 init bootstrap が
+instance 内に `.venv` を作り、Kansei をインストールします。以後の command は生成された
+workspace から実行できます。この step を省くには `--no-bootstrap` を使います。local
+checkout から bootstrap する場合は `--kansei-install-spec C:\path\to\kansei` を指定します。
 
-If HarnessOps is available as `hops`, initialization also runs
-`hops init --profile generic-code` inside the generated instance. When working
-from a local HarnessOps checkout instead of an installed command, set:
+HarnessOps が `hops` として利用できる場合、init は instance 内で
+`hops init --profile generic-code` も実行します。インストール済み command ではなく local
+HarnessOps checkout を使う場合は次のように設定します。
 
 ```powershell
 $env:KANSEI_HARNESSOPS_SOURCE = "C:\path\to\harnessops"
 ```
 
-Use `--no-harnessops` when you want a plain Kansei instance without the
-HarnessOps feedback overlay.
+HarnessOps feedback overlay を持たない素の Kansei instance が欲しい場合は
+`--no-harnessops` を使います。
 
-## Validate the instance
+## Instance を検証する
 
 ```powershell
 uv run --directory . kansei doctor --root .tmp/kansei-demo
 uv run --directory . kansei version
 ```
 
-`doctor` checks the expected layout, required TOML files, registry shape, and
-managed-file checksums. Local edits to managed files are reported as warnings so
-you can decide whether to keep them or accept a generated update later.
+`doctor` は期待される layout、必須 TOML file、registry shape、managed-file checksum を
+確認します。managed file への local edit は warning として報告されるので、保持するか
+後で生成 update を取り込むかを判断できます。
 
-## Work inside the instance
+## Instance 内で作業する
 
-Most commands discover the nearest Kansei instance from the current directory:
+ほとんどの command は現在 directory から最も近い Kansei instance を探索します。
 
 ```powershell
 Set-Location .tmp/kansei-demo
@@ -81,18 +76,17 @@ uv run --directory ..\.. kansei status
 uv run --directory ..\.. kansei dashboard today
 ```
 
-The examples below use `uv run --directory ..\..` when they assume your current
-directory is `.tmp/kansei-demo`. If `kansei` is installed in your environment,
-or after activating `.venv`, you can omit that prefix and run `kansei ...`
-directly.
+以下の例では、現在 directory が `.tmp/kansei-demo` である前提で
+`uv run --directory ..\..` を使っています。`kansei` を環境にインストール済みの場合や、
+`.venv` を activate 済みの場合は、この prefix を省いて `kansei ...` を直接実行できます。
 
-When running from somewhere else, use command-specific root flags where
-available, for example `kansei doctor --root PATH`, `kansei update-harness
---root PATH`, `kansei mcp config --root PATH`, or `kansei backup --root PATH`.
+別の場所から実行するときは、利用できる command では root flag を指定します。例:
+`kansei doctor --root PATH`, `kansei update-harness --root PATH`,
+`kansei mcp config --root PATH`, `kansei backup --root PATH`。
 
-## Register a local code project
+## ローカル code project を登録する
 
-Use the CLI for registry edits instead of hand-rewriting TOML:
+TOML を手で書き換える代わりに CLI で registry を編集します。
 
 ```powershell
 uv run --directory ..\.. kansei project add `
@@ -105,7 +99,7 @@ uv run --directory ..\.. kansei project add `
   --priority B
 ```
 
-Then inspect it:
+登録内容を確認します。
 
 ```powershell
 uv run --directory ..\.. kansei project show demo-code
@@ -113,12 +107,12 @@ uv run --directory ..\.. kansei project status demo-code
 uv run --directory ..\.. kansei project open demo-code
 ```
 
-`project open` prints the resolved path by default. Add `--exec` only when you
-want Kansei to ask the operating system to open that path.
+`project open` は既定では解決された path を表示します。OS にその path を開かせたい場合
+だけ `--exec` を追加します。
 
-## Preview before writing
+## 書く前に preview する
 
-Kansei keeps read, plan, and apply flows separate:
+Kansei は read、plan、apply を分けます。
 
 ```powershell
 uv run --directory ..\.. kansei dashboard today
@@ -127,25 +121,25 @@ uv run --directory ..\.. kansei update-harness
 uv run --directory ..\.. kansei update-harness --apply
 ```
 
-Dashboard commands preview Markdown unless `--write` is passed.
-`update-harness` is a dry run unless `--apply` is passed. The HarnessOps chained
-call follows the same mode: dry runs call `hops update-harness --dry-run`, while
-apply calls `hops update-harness`.
+dashboard command は `--write` が無い限り Markdown を preview します。
+`update-harness` は `--apply` が無い限り dry run です。HarnessOps への chained call も
+同じ mode に従い、dry run では `hops update-harness --dry-run`、apply では
+`hops update-harness` を呼びます。
 
-## Optional MCP setup
+## 任意の MCP setup
 
-Preview the Codex MCP config generated from `providers.toml`:
+`providers.toml` から生成される Codex MCP config を preview します。
 
 ```powershell
 uv run --directory ..\.. kansei mcp config
 uv run --directory ..\.. kansei mcp inspect
 ```
 
-Write `.codex/config.toml` after review:
+内容を確認したあとで `.codex/config.toml` を書きます。
 
 ```powershell
 uv run --directory ..\.. kansei mcp config --write --force
 ```
 
-Use `--force` only after reviewing the preview. It is needed when an existing
-generated config differs from the provider-derived output.
+既存の generated config と provider 由来の出力が異なる場合、上書きには `--force` が必要です。
+必ず preview を確認してから使ってください。

@@ -1,84 +1,83 @@
-# Update Harness
+# update-harness
 
-`kansei update-harness` is a safe template update flow, not a directory sync.
+`kansei update-harness` は安全な template 更新フローであり、directory sync ではありません。
 
-It updates only files that Kansei knows how to manage, using `.kansei/lock.toml`
-checksums to avoid overwriting local edits.
+Kansei が管理対象として知っている file だけを更新し、`.kansei/lock.toml` の checksum を
+使って local edit の上書きを防ぎます。
 
-Kansei also delegates HarnessOps overlay maintenance to `hops` when the command
-is available. Dry runs call `hops update-harness --dry-run`; `--apply` calls
-`hops update-harness`. If an older instance has no `.harnessops/project.toml`,
-Kansei previews or applies `hops init --profile generic-code` first.
+Kansei は HarnessOps overlay の maintenance も `hops` に委譲します。command が利用できる場合、
+dry run では `hops update-harness --dry-run`、`--apply` では `hops update-harness` を呼びます。
+`.harnessops/project.toml` が無い古い instance では、先に `hops init --profile generic-code` を
+preview または apply します。
 
-## Managed Files
+## Managed file の扱い
 
-Current lock-tracked files created by `kansei init` include:
+`kansei init` が作成し、現在 lock で追跡している file には次が含まれます。
 
 - `AGENTS.md`
 - `KANSEI.md`
 - `.gitignore`
-- `.codex/config.toml` when `--with-codex` is used
+- `--with-codex` 使用時の `.codex/config.toml`
 - `runbooks/_templates/project-runbook.md`
 - `prompts/_templates/delegation.md`
 
-These files appear in `.kansei/lock.toml` with template path, version, owner,
-class, and checksum.
+これらの file は `.kansei/lock.toml` に template path、version、owner、class、checksum と
+ともに記録されます。
 
-## User-Owned Files
+## User-owned file の扱い
 
-Kansei treats the following as user-owned operational state:
+Kansei は次のものを user-owned な運用状態として扱います。
 
 - `projects.toml`
 - `providers.toml`
 - `knowledge/`
 - `dashboards/today.md`, `dashboards/weekly.md`
-- project runbooks and prompts outside `_templates`
-- `.env`, `.secrets/`, local notes
+- `_templates` の外にある project runbook と prompt
+- `.env`, `.secrets/`, local note
 
-`update-harness` does not overwrite these files.
+`update-harness` はこれらを上書きしません。
 
-## Behavior
+## 挙動
 
-Dry-run preview is the default:
+既定は dry-run preview です。
 
 ```powershell
 kansei update-harness
 ```
 
-This also previews the HarnessOps chained call unless `--no-harnessops` is
-passed.
+`--no-harnessops` が無い限り、HarnessOps chained call も preview します。
 
-Apply only after reviewing the plan:
+plan を確認したあとで適用します。
 
 ```powershell
 kansei update-harness --apply
 ```
 
-If a managed file still matches its lock checksum, Kansei can update it in
-place. If a managed file has local edits, Kansei writes the new template beside
-it as `<path>.new` and leaves the local file untouched.
+managed file が lock checksum と一致していれば、Kansei はその場で更新できます。managed file に
+local edit がある場合、Kansei は新しい template を `<path>.new` として横に書き、元の file は
+そのまま残します。
 
-HarnessOps files are never rewritten directly by Kansei. The apply path invokes
-`hops init` or `hops update-harness`, so `.harnessops/`,
-`harness-feedback/`, and `harness-lab/` remain owned by HarnessOps.
+HarnessOps file は Kansei が直接書き換えません。apply path は `hops init` または
+`hops update-harness` を呼ぶため、`.harnessops/`, `harness-feedback/`, `harness-lab/` の所有は
+HarnessOps に残ります。
 
-## Availability
+## 利用可否
 
-Kansei resolves `hops` in this order:
+Kansei は次の順序で `hops` を解決します。
 
 1. `KANSEI_HOPS_COMMAND`
-2. `hops` on `PATH`
+2. `PATH` 上の `hops`
 3. `uvx --isolated --from <KANSEI_HARNESSOPS_SOURCE> hops`
 
-If none are available, Kansei prints a warning and continues. Use
-`--require-harnessops` to make that a command failure.
+どれも利用できない場合、Kansei は warning を表示して続行します。command failure にしたい場合は
+`--require-harnessops` を使います。
 
-## Generated Config
+## 生成 config
 
-`.codex/config.toml` can also be regenerated from `providers.toml`:
+`.codex/config.toml` は `providers.toml` から再生成できます。
 
 ```powershell
 kansei mcp config --write --force
 ```
 
-This command updates the lock entry for `.codex/config.toml`.
+この command は `.codex/config.toml` の lock entry も更新します。

@@ -1,37 +1,37 @@
 # Kansei
 
-Kansei is a private local control plane for AI-assisted research operations. It
-keeps project registries, provider configuration, dashboards, knowledge,
-runbooks, and MCP access in one local instance while leaving each target project
-in its own repository or remote environment.
+Kansei は、AI 支援の研究運用を扱うための private local control plane です。
+project registry、provider 設定、dashboard、knowledge、runbook、MCP access を
+ひとつのローカル instance に集約しつつ、各 target project はそれぞれの
+リポジトリや remote environment に残します。
 
-Kansei is intentionally conservative: read first, plan second, apply last.
-The CLI is the source of truth for state changes. MCP and Codex workflows expose
-safe read and planning surfaces over that state.
+Kansei は保守的に動きます。まず読む、次に計画する、最後に適用する、という
+順序を基本にします。状態変更の正本は CLI です。MCP と Codex workflow は、
+その状態に対する安全な参照・計画用インターフェースを提供します。
 
-## Install
+## インストール
 
 ```powershell
 uv tool install kansei
 kansei version
 ```
 
-For local development from this repository:
+このリポジトリからローカル開発する場合:
 
 ```powershell
 uv run kansei version
 uv run --extra dev pytest -q
 ```
 
-## Quickstart
+## クイックスタート
 
-Create a private instance in one line from PyPI:
+PyPI から 1 行で private instance を作成できます。
 
 ```powershell
 uvx --from kansei kansei init ~/work/kansei --git --with-codex --with-mcp
 ```
 
-Or, if `kansei` is already installed:
+すでに `kansei` をインストール済みの場合:
 
 ```powershell
 kansei init ~/work/kansei --git --with-codex --with-mcp
@@ -40,7 +40,7 @@ cd ~/work/kansei
 kansei doctor
 ```
 
-Register a local code project:
+ローカルの code project を登録します。
 
 ```powershell
 kansei project add --id demo --name Demo --kind code --provider generic-code --location local --path .
@@ -49,7 +49,7 @@ kansei status
 kansei dashboard today
 ```
 
-Generate Codex MCP configuration from `providers.toml`:
+`providers.toml` から Codex MCP 設定を生成します。
 
 ```powershell
 kansei mcp config
@@ -57,84 +57,84 @@ kansei mcp config --write --force
 kansei mcp inspect
 ```
 
-Preview a harness update:
+harness update を preview します。
 
 ```powershell
 kansei update-harness
 ```
 
-Apply only when the plan is expected:
+plan が想定どおりのときだけ適用します。
 
 ```powershell
 kansei update-harness --apply
 ```
 
-`kansei init` creates `.venv` in the instance and installs Kansei into it.
-`uvx` only installs Kansei into a temporary runner environment; the init
-bootstrap is what makes the generated instance self-contained. When HarnessOps
-is available as `hops`, init also runs `hops init`, and `kansei update-harness`
-chains to `hops update-harness`. If `hops` is not on `PATH`, set
-`KANSEI_HARNESSOPS_SOURCE` to a local HarnessOps checkout.
+`kansei init` は instance 内に `.venv` を作成し、そこへ Kansei をインストールします。
+`uvx` がインストールするのは一時的な実行環境だけです。生成された
+instance を自己完結させるのは、この init bootstrap です。HarnessOps が `hops`
+として利用できる場合、init は `hops init` も実行します。また、
+`kansei update-harness` は `hops update-harness` に連鎖します。`hops` が
+`PATH` に無い場合は、local HarnessOps checkout を `KANSEI_HARNESSOPS_SOURCE` に
+設定してください。
 
-## Core Commands
+## 主なコマンド
 
-- `kansei init`: create a private local instance.
-- `kansei doctor`: validate instance structure, TOML, and managed-file drift.
-- `kansei project list/add/show/open/status/doctor`: manage the project registry.
-- `kansei provider list/doctor/connect/disconnect`: inspect providers and plan SSH tunnels.
-- `kansei status`: aggregate active project status.
-- `kansei dashboard today|weekly`: render operational planning views.
-- `kansei search`: search local knowledge, runbooks, prompts, dashboards, and `KANSEI.md`.
-- `kansei delegate`: print a safe Codex delegation plan unless `--exec` is explicit.
-- `kansei mcp serve/config/inspect`: expose MCP tools and generate Codex MCP config.
-- `kansei backup`: zip control-plane files into `.kansei/backups`.
-- `kansei migrate`: inspect pending layout migrations.
+- `kansei init`: private local instance を作成します。
+- `kansei doctor`: instance 構造、TOML、registry、managed file の drift を検証します。
+- `kansei project list/add/show/open/status/doctor`: project registry を管理します。
+- `kansei provider list/doctor/connect/disconnect`: provider を確認し、SSH tunnel を計画します。
+- `kansei status`: active project の状態を集約します。
+- `kansei dashboard today|weekly`: 運用 planning view を表示します。
+- `kansei search`: local knowledge、runbook、prompt、dashboard、`KANSEI.md` を検索します。
+- `kansei delegate`: `--exec` が明示されない限り、安全な Codex delegation plan を出力します。
+- `kansei mcp serve/config/inspect`: MCP tool を公開し、Codex MCP config を生成します。
+- `kansei backup`: control-plane file を `.kansei/backups` に zip します。
+- `kansei migrate`: 未適用の layout migration を確認します。
 
-## Instance Model
+## Instance の構成
 
-`kansei init` creates a private instance containing:
+`kansei init` は次のような private instance を作成します。
 
 - `kansei.toml`, `projects.toml`, `providers.toml`
 - `knowledge/`, `dashboards/`, `runbooks/`, `prompts/`
-- `.codex/config.toml` when requested
+- 必要に応じて `.codex/config.toml`
 - `.kansei/manifest.toml`, `.kansei/lock.toml`, state/cache/log/backup folders
 
-Kansei does not copy source trees, simulation outputs, manuscripts, or remote
-job state into the control plane.
+Kansei は source tree、simulation output、manuscript、remote job state を
+control plane にコピーしません。
 
-## Safety Model
+## 安全性の考え方
 
-- User-owned files such as `projects.toml`, `providers.toml`, `knowledge/`, and
-  daily dashboards are not overwritten by `update-harness`.
-- Managed files are checked against `.kansei/lock.toml`.
-- Locally edited managed files receive sidecar `.new` files during harness
-  updates instead of being overwritten.
-- Remote writes, HPC submit/cancel/delete, archive/delete, and manuscript
-  rewrite workflows are not automatic in v0.1.
-- SSH tunnel commands are printed by default; foreground execution requires
-  `--exec`.
-- `.venv` is ignored and may be recreated; private operational state remains in
-  the instance files, not the bootstrap environment.
-- HarnessOps integration is delegated to `hops`; Kansei does not directly
-  reshape `.harnessops/`, `harness-feedback/`, or `harness-lab/`.
+- `projects.toml`, `providers.toml`, `knowledge/`, daily dashboard などの
+  user-owned file は `update-harness` で上書きされません。
+- managed file は `.kansei/lock.toml` と照合されます。
+- ローカル編集済みの managed file は上書きされず、harness update 時に
+  `.new` sidecar file が作られます。
+- remote write、HPC submit/cancel/delete、archive/delete、manuscript rewrite は
+  v0.1 では自動実行されません。
+- SSH tunnel command は既定では表示のみです。実際に foreground 実行するには
+  `--exec` が必要です。
+- `.venv` は git 管理外で、再作成可能です。private な運用状態は bootstrap
+  environment ではなく instance file 側に残します。
+- HarnessOps 連携は `hops` に委譲します。Kansei が `.harnessops/`,
+  `harness-feedback/`, `harness-lab/` を直接組み替えることはありません。
 
-## Agent Guidance
+## Agent 向けガイド
 
-Repository-local Codex guidance lives under `.agents/skills/kansei-control-plane`.
-Use it when working on private Kansei instances or updating the instance
-operational harness.
+リポジトリローカルの Codex guidance は `.agents/skills/kansei-control-plane` にあります。
+private Kansei instance の作業や instance operational harness の更新時に使います。
 
-## Documentation
+## ドキュメント
 
-- [Architecture](docs/architecture.md)
-- [Get started](docs/get-started.md)
-- [CLI reference](docs/cli.md)
-- [Registries](docs/registries.md)
-- [MCP integration](docs/mcp.md)
+- [アーキテクチャ](docs/architecture.md)
+- [はじめに](docs/get-started.md)
+- [CLI リファレンス](docs/cli.md)
+- [Registry](docs/registries.md)
+- [MCP 連携](docs/mcp.md)
 - [Provider contract](docs/provider-contract.md)
-- [Update harness](docs/update-harness.md)
-- [Security](docs/security.md)
-- [Release notes](docs/release.md)
-- [Publishing](docs/publishing.md)
+- [update-harness](docs/update-harness.md)
+- [セキュリティ](docs/security.md)
+- [リリースノート](docs/release.md)
+- [公開手順](docs/publishing.md)
 
-The full v0.1 specification is in [SPEC.md](SPEC.md).
+v0.1 の完全な仕様は [SPEC.md](SPEC.md) にあります。

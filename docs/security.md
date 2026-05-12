@@ -1,42 +1,41 @@
-# Security
+# セキュリティ
 
-Kansei is private by default even though the package repository is public.
+package リポジトリは public ですが、Kansei は既定では private です。
 
-## Do Not Commit
+## コミットしてはいけないもの
 
 - `.env`
 - `.secrets/`
-- API keys or bearer tokens
-- SSH private keys
-- HPC credentials
-- private project paths from a real local instance
-- unpublished paper notes or collaborator-specific constraints
+- API key または bearer token
+- SSH private key
+- HPC credential
+- 実在する local instance 由来の private project path
+- 未公開の paper note や collaborator 固有の制約
 
-## Apply Gates
+## 適用ゲート
 
-The default implementation favors read and plan operations. Actions requiring
-explicit user intent include:
+既定の実装は read と plan を優先します。次の操作には明示的なユーザー意図が必要です。
 
-- writing user-owned files
-- creating or updating the instance-local `.venv`
-- overwriting generated `.codex/config.toml`
-- remote writes
+- user-owned file の書き込み
+- instance-local な `.venv` の作成または更新
+- generated `.codex/config.toml` の上書き
+- remote write
 - Slurm submit/cancel/delete
 - archive/delete
 - manuscript rewrite
 - harness update apply
-- HarnessOps chained updates through `hops`
+- `hops` 経由の HarnessOps chained update
 
 ## MCP
 
-HTTP MCP should bind to `127.0.0.1` unless the operator has a deliberate access
-control plan. SSH tunnels are preferred for remote provider access.
+HTTP MCP は、明確な access-control plan が無い限り `127.0.0.1` に bind してください。
+remote provider access には SSH tunnel を優先します。
 
-## Feedback Boundary
+## フィードバック境界
 
-If local friction is exported upstream, sanitize it first. Keep reproducible
-generic failure details, not private project data.
+ローカルで起きた摩擦を upstream に export する場合は、先に sanitize します。
+private project data ではなく、再現可能で汎用的な失敗内容を残してください。
 
-HarnessOps overlay writes remain `hops`-owned. Kansei may invoke `hops init` or
-`hops update-harness`, but it must not directly restructure `.harnessops/`,
-`harness-feedback/`, or `harness-lab/`.
+HarnessOps overlay write は `hops` の責務です。Kansei は `hops init` や
+`hops update-harness` を呼ぶことはありますが、`.harnessops/`, `harness-feedback/`,
+`harness-lab/` を直接組み替えてはいけません。

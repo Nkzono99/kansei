@@ -2,7 +2,7 @@ schema_version = "0.1"
 
 [workspace]
 name = "{{ name }}"
-description = "Private control plane for AI-assisted research operations."
+description = "AI 支援の研究運用向け private control plane。"
 timezone = "{{ timezone }}"
 default_dashboard = "dashboards/today.md"
 
@@ -34,4 +34,3 @@ enabled = {{ "true" if with_mcp else "false" }}
 default_transport = "stdio"
 http_bind_host = "127.0.0.1"
 http_port = 18764
-

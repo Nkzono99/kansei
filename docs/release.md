@@ -1,43 +1,40 @@
-# Release Notes
+# リリースノート
 
-Kansei v0.1 is an alpha control-plane package. The implemented scope focuses on
-local instance creation, validation, registry operations, dashboard rendering,
-safe harness updates, backups, and a read/plan-oriented MCP surface.
+Kansei v0.1 は alpha 版の control-plane package です。実装済みの範囲は、
+local instance 作成、検証、registry 操作、dashboard render、安全な harness update、
+backup、read/plan-oriented な MCP surface です。
 
 ## v0.1.0
 
-Implemented:
+実装済み:
 
-- `kansei init` for creating private local instances from package templates.
-- init bootstrap for `.venv` creation and project-local Kansei installation.
-- `kansei doctor` for layout, TOML, registry, and managed-file checks.
-- `kansei project` commands for listing, showing, adding, opening, and checking
-  registered projects.
-- `kansei provider` commands for listing providers, checking built-in provider
-  health, and planning or running foreground SSH tunnels.
-- `kansei status`, `kansei dashboard today`, and `kansei dashboard weekly` for
-  local operating views.
-- `kansei search` over Markdown knowledge, runbook, prompt, and dashboard
-  surfaces.
-- `kansei update-harness` dry-run/apply flow for package-managed files.
-- `kansei mcp serve`, `kansei mcp config`, and `kansei mcp inspect`.
-- `kansei backup` for local control-plane zip archives.
-- `kansei migrate` status inspection for the current layout version.
+- package template から private local instance を作る `kansei init`。
+- `.venv` の作成と project-local な Kansei インストールを行う init bootstrap。
+- layout、TOML、registry、managed-file を検証する `kansei doctor`。
+- 登録済み project を list/show/add/open/check する `kansei project` command。
+- provider を list し、built-in provider health を確認し、foreground SSH tunnel を
+  計画または実行する `kansei provider` command。
+- local operating view を表示する `kansei status`, `kansei dashboard today`,
+  `kansei dashboard weekly`。
+- Markdown knowledge、runbook、prompt、dashboard surface を検索する `kansei search`。
+- package-managed file 向けの `kansei update-harness` dry-run/apply flow。
+- `kansei mcp serve`, `kansei mcp config`, `kansei mcp inspect`。
+- local control-plane file を zip archive する `kansei backup`。
+- 現在の layout version に対する migration status を確認する `kansei migrate`。
 
-## Safety Model
+## 安全性の考え方
 
-- Private instance data stays in the private instance.
-- Read and preview commands are the default where practical.
-- File writes require explicit flags such as `--write` or `--apply`.
-- Remote connection helpers print plans unless `--exec` is provided.
-- `update-harness` updates managed files only and protects user-owned state.
+- private instance data は private instance 内に残します。
+- 可能な限り read command と preview command を既定にします。
+- file write には `--write` や `--apply` のような明示 flag が必要です。
+- remote connection helper は `--exec` が無い限り plan を表示します。
+- `update-harness` は managed file だけを更新し、user-owned state を保護します。
 
-## Current Limitations
+## 現在の制限
 
-- MCP write tools are not implemented in v0.1.
-- `provider disconnect` does not manage background tunnel processes.
-- Domain-specific runops, paperops, and harnessops behavior is represented as
-  provider configuration and delegation surfaces; their domain state remains in
-  those provider projects.
-- Code project health is intentionally generic and does not replace a future
-  dedicated codeops provider.
+- v0.1 では MCP write tool は実装していません。
+- `provider disconnect` は background tunnel process を管理しません。
+- runops、paperops、harnessops など domain-specific な挙動は provider 設定と
+  delegation surface として表現します。それぞれの domain state は provider project 側に残ります。
+- code project health は意図的に generic です。将来の dedicated codeops provider を
+  置き換えるものではありません。

@@ -1,73 +1,64 @@
-# Kansei Control Plane Workflow
+# Kansei Control Plane ワークフロー
 
-## Instance Orientation
+## Instance の向き先確認
 
-Confirm the root before making plans. A Kansei instance root has `kansei.toml`
-and `.kansei/manifest.toml`; a target project root usually has its own project
-files and may be registered from `projects.toml`. If both are present, prefer the
-more specific user request and state which root you are operating on.
+計画を立てる前に root を確認します。Kansei instance root には `kansei.toml` と
+`.kansei/manifest.toml` があります。target project root には通常、その project 固有の file があり、
+`projects.toml` に登録されていることがあります。両方が存在する場合は、より具体的なユーザー依頼を
+優先し、どちらの root で作業しているかを明示してください。
 
-Use `scripts/check_instance.py <instance-root>` when you need a deterministic
-structural check that does not import the package or mutate files.
+package import や file mutation なしで deterministic な構造確認が必要な場合は
+`scripts/check_instance.py <instance-root>` を使います。
 
-## Ownership Classes
+## 所有区分
 
-Managed files are maintained by Kansei templates and updated by
-`kansei update-harness` with lock-file checks. Examples include root
-`AGENTS.md`, `KANSEI.md`, template runbooks, template prompts, and Codex config
-templates.
+managed file は Kansei template で管理され、`kansei update-harness` が lock-file check 付きで
+更新します。例: root の `AGENTS.md`, `KANSEI.md`, template runbook、template prompt、
+Codex config template。
 
-User-owned files are the user's source of truth. Do not overwrite them during
-harness updates. Examples: `projects.toml`, `providers.toml`, `knowledge/`,
-`dashboards/today.md`, `.env`, `.secrets/`, notebooks, local notes, and provider
-credentials.
+user-owned file はユーザーの正本です。harness update 中に上書きしてはいけません。例:
+`projects.toml`, `providers.toml`, `knowledge/`, `dashboards/today.md`, `.env`,
+`.secrets/`, notebook、local note、provider credential。
 
-Generated files can be regenerated but should still be previewed before writing.
-Examples: `.gitignore`, `.codex/config.toml`, `dashboards/project-status.md`,
-and provider status caches. The instance `README.md` is initially templated but
-is user-owned after creation.
+generated file は再生成できますが、書く前に preview してください。例:
+`.gitignore`, `.codex/config.toml`, `dashboards/project-status.md`, provider status cache。
+instance の `README.md` は初期生成されますが、作成後は user-owned として扱います。
 
-## Safe Operation Sequence
+## 安全な操作手順
 
-1. Read: inspect config, registries, provider health, dashboards, or knowledge.
-2. Plan: produce a diff, command plan, delegation plan, or dashboard proposal.
-3. Apply: write only after the user asked for it or the CLI has an explicit
-   `--apply` style flag.
+1. Read: config、registry、provider health、dashboard、knowledge を確認します。
+2. Plan: diff、command plan、delegation plan、dashboard proposal を作ります。
+3. Apply: ユーザーが依頼した場合、または CLI に `--apply` のような明示 flag がある場合だけ書きます。
 
-Prefer these preview surfaces:
+優先する preview surface:
 
-- Harness templates: `kansei update-harness --root <root>`
-- Dashboard content: from the instance root, `kansei dashboard today`
+- Harness template: `kansei update-harness --root <root>`
+- Dashboard content: instance root から `kansei dashboard today`
 - MCP config: `kansei mcp config --root <root>`
-- Workspace/provider health: `kansei doctor --root <root>` and provider/project
-  doctor commands from the instance root
+- Workspace/provider health: `kansei doctor --root <root>` と、instance root からの
+  provider/project doctor command
 
-When applying, repeat the exact root path used for preview. If the preview shows
-`.new` sidecar files for edited managed files, preserve the user's original file
-and explain the sidecar instead of merging automatically.
+適用時は、preview と同じ root path をもう一度使います。preview に edited managed file 用の
+`.new` sidecar が表示された場合は、元の file を保持し、自動 merge せず sidecar の意味を説明します。
 
-## Delegation
+## 委譲
 
-Local project work should run from the target project cwd. SSH/HPC work should
-prefer read-only provider tools and explicit tunnel commands. Kansei should not
-submit Slurm jobs, cancel jobs, delete remote files, or run long computations on
-login nodes by default.
+local project 作業は target project の cwd から実行します。SSH/HPC 作業では read-only provider tool と
+明示 tunnel command を優先します。Kansei は既定で Slurm job の submit、job cancel、remote file delete、
+login node 上での長時間 computation を行いません。
 
-Before delegating, identify the project id, provider id, target location, and
-requested action. If any of those are missing, inspect registries or ask a narrow
-question instead of guessing.
+delegation 前に project id、provider id、target location、依頼された操作を特定します。足りないものが
+ある場合は registry を確認するか、推測せず狭い質問をします。
 
-## MCP Safety
+## MCP の安全性
 
-Kansei MCP tools are intended to be read-only or plan-oriented. Treat tool names
-that include `plan`, `status`, `inspect`, `list`, `health`, or `search` as safe
-starting points. Treat tools that write files, call remote systems, submit jobs,
-cancel jobs, delete data, archive data, or rewrite manuscripts as approval-gated
-even when the underlying provider exposes them.
+Kansei MCP tool は read-only または plan-oriented の想定です。`plan`, `status`, `inspect`,
+`list`, `health`, `search` を含む tool name は安全な出発点として扱います。file write、remote
+system call、job submit、job cancel、data delete、archive、manuscript rewrite を行う tool は、
+underlying provider が公開していても approval-gated として扱います。
 
-## Public Package Hygiene
+## 公開パッケージの衛生管理
 
-Do not copy private instance content into the public package. When improving
-templates, examples, tests, docs, or skills, use generic placeholders and
-temporary demo instances. Keep real project names, collaborators, credentials,
-cluster names, endpoints, unpublished notes, and paper text out of repo changes.
+private instance の内容を public package にコピーしないでください。template、example、test、docs、skill を
+改善するときは generic placeholder と temporary demo instance を使います。実在する project name、
+collaborator、credential、cluster name、endpoint、未公開 note、paper text を repo change に含めないでください。
