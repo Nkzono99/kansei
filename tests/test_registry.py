@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import pytest
+from typer.testing import CliRunner
 
+from kansei.cli.main import app
 from kansei.core.errors import ProjectNotFoundError, RegistryError
+from kansei.core.instance import init_instance
 from kansei.registry.projects import Project, add_project, load_projects
 from kansei.registry.providers import load_providers
 
@@ -116,3 +119,20 @@ required = false
 
     assert registry.get("generic-code").command == "git"
     assert registry.get("runops_hpc").url == "http://127.0.0.1:18765/mcp"
+
+
+def test_project_open_status_and_provider_connect_commands(tmp_path, monkeypatch) -> None:
+    root = init_instance(tmp_path / "kansei", with_mcp=True)
+    monkeypatch.chdir(root)
+
+    open_result = CliRunner().invoke(app, ["project", "open", "kansei"])
+    assert open_result.exit_code == 0
+    assert str(root) in open_result.stdout
+
+    status_result = CliRunner().invoke(app, ["project", "status", "kansei"])
+    assert status_result.exit_code == 0
+    assert '"project_id": "kansei"' in status_result.stdout
+
+    connect_result = CliRunner().invoke(app, ["provider", "connect", "runops_hpc", "--tunnel"])
+    assert connect_result.exit_code == 0
+    assert "ssh -N -L 18765:127.0.0.1:18765 hpc-login" in connect_result.stdout
