@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kansei Repository"
+  short_description: "Kansei package repo を保守する"
+  default_prompt: "$kansei-repository-maintainer を使って、公開 package と generated instance template の境界を守りながら Kansei リポジトリを変更してください。"

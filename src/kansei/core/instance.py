@@ -29,6 +29,30 @@ MANAGED_TEMPLATES: tuple[TemplateFile, ...] = (
     TemplateFile("AGENTS.md", "root/AGENTS.md.j2"),
     TemplateFile("KANSEI.md", "root/KANSEI.md.j2"),
     TemplateFile(".gitignore", "root/gitignore.j2", "generated"),
+    TemplateFile(
+        ".agents/skills/kansei-control-plane/SKILL.md",
+        "agents/skills/kansei-control-plane/SKILL.md.j2",
+    ),
+    TemplateFile(
+        ".agents/skills/kansei-control-plane/agents/openai.yaml",
+        "agents/skills/kansei-control-plane/agents/openai.yaml.j2",
+    ),
+    TemplateFile(
+        ".agents/skills/kansei-control-plane/references/control-plane-workflow.md",
+        "agents/skills/kansei-control-plane/references/control-plane-workflow.md.j2",
+    ),
+    TemplateFile(
+        ".agents/skills/kansei-control-plane/scripts/check_instance.py",
+        "agents/skills/kansei-control-plane/scripts/check_instance.py.j2",
+    ),
+    TemplateFile(
+        ".agents/skills/feedback-kansei/SKILL.md",
+        "agents/skills/feedback-kansei/SKILL.md.j2",
+    ),
+    TemplateFile(
+        ".agents/skills/feedback-kansei/agents/openai.yaml",
+        "agents/skills/feedback-kansei/agents/openai.yaml.j2",
+    ),
     TemplateFile("runbooks/_templates/project-runbook.md", "runbooks/project-runbook.md.j2"),
     TemplateFile("prompts/_templates/delegation.md", "prompts/delegation.md.j2"),
 )

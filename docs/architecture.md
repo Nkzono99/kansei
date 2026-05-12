@@ -11,6 +11,7 @@ Kansei は、公開 Python package と private local instance を分離します
 - `src/kansei/providers` 配下の provider adapter
 - dashboard / search / MCP / update helper
 - `src/kansei/templates` 配下の private instance template
+- `src/kansei/templates/agents/skills` 配下の instance-local agent skill template
 - `.agents/skills` 配下の repo-local agent guidance
 - `schemas` 配下の公開 JSON schema
 - test と GitHub Actions workflow
@@ -34,6 +35,10 @@ PATH/
   dashboards/
   runbooks/
   prompts/
+  .agents/
+    skills/
+      kansei-control-plane/
+      feedback-kansei/
   .codex/
   .kansei/
     manifest.toml
@@ -49,6 +54,8 @@ instance は運用 metadata と local knowledge を保存します。target proj
 source tree、manuscript、Slurm output、provider 側の状態を取り込むものでは
 ありません。`kansei init` は既定で git 管理外の `.venv` も作成し、bootstrap 後に
 instance 自身の `kansei` command を実行できるようにします。
+`.agents/skills/` には instance 操作用の `kansei-control-plane` と、upstream feedback 用の
+`feedback-kansei` を managed file として配ります。
 
 ## 状態の境界
 
@@ -71,7 +78,8 @@ agent or user
 ## ファイル所有区分
 
 - managed: `AGENTS.md`, `KANSEI.md`, `.gitignore`, `.codex/config.toml`,
-  `runbooks/_templates` と `prompts/_templates` 配下の template file など、
+  `.agents/skills/` の Kansei-managed skill、`runbooks/_templates` と
+  `prompts/_templates` 配下の template file など、
   lock で追跡される file。
 - user-owned: registry、knowledge、dashboard、runbook、prompt、ユーザーが作成した
   local note。

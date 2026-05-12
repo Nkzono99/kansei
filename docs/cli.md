@@ -41,6 +41,10 @@ bootstrap を省くには `--no-bootstrap`、bootstrap 問題を command failure
 `--require-bootstrap` を使います。local development checkout からインストールする場合は
 `--kansei-install-spec PATH_OR_PACKAGE_SPEC` を指定します。
 
+`kansei init` は instance-local skill として `.agents/skills/kansei-control-plane` と
+`.agents/skills/feedback-kansei` も生成します。前者は instance 操作用、後者は
+Kansei upstream へのサニタイズ済み feedback / issue 下書き用です。
+
 ## HarnessOps 連鎖
 
 `hops` command が利用できる場合、`kansei init` は既定で

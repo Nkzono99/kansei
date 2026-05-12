@@ -79,7 +79,7 @@ instance を自己完結させるのは、この init bootstrap です。Harness
 
 ## 主なコマンド
 
-- `kansei init`: private local instance を作成します。
+- `kansei init`: private local instance と instance-local agent skill を作成します。
 - `kansei doctor`: instance 構造、TOML、registry、managed file の drift を検証します。
 - `kansei project list/add/show/open/status/doctor`: project registry を管理します。
 - `kansei provider list/doctor/connect/disconnect`: provider を確認し、SSH tunnel を計画します。
@@ -97,6 +97,7 @@ instance を自己完結させるのは、この init bootstrap です。Harness
 
 - `kansei.toml`, `projects.toml`, `providers.toml`
 - `knowledge/`, `dashboards/`, `runbooks/`, `prompts/`
+- `.agents/skills/kansei-control-plane`, `.agents/skills/feedback-kansei`
 - 必要に応じて `.codex/config.toml`
 - `.kansei/manifest.toml`, `.kansei/lock.toml`, state/cache/log/backup folders
 
@@ -121,8 +122,9 @@ control plane にコピーしません。
 
 ## Agent 向けガイド
 
-リポジトリローカルの Codex guidance は `.agents/skills/kansei-control-plane` にあります。
-private Kansei instance の作業や instance operational harness の更新時に使います。
+このリポジトリの保守用 Codex guidance は `.agents/skills/kansei-repository-maintainer` にあります。
+`kansei init` で作成される instance 側には `.agents/skills/kansei-control-plane` と
+`.agents/skills/feedback-kansei` が入ります。
 
 ## ドキュメント
 

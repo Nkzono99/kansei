@@ -1,0 +1,73 @@
+---
+name: feedback-kansei
+description: Kansei instance で見つけた不具合、template friction、docs gap、provider integration の改善候補を、private data をサニタイズして upstream `Nkzono99/kansei` に報告するときに使う。HarnessOps が利用できる場合は `hops` の feedback/export/issue flow を優先し、無い場合は GitHub issue 下書きを作る。
+---
+
+# Feedback Kansei
+
+## 基本ルール
+
+Kansei への feedback は、private instance の中身をそのまま外へ出さず、再現可能な最小情報に
+サニタイズして扱います。GitHub issue の作成、issue コメント、remote push は、ユーザーが明示した場合だけ
+実行してください。
+
+## サニタイズ
+
+外部に出す前に次を置き換えます。
+
+- local path: `<LOCAL_PATH>`
+- project 名、paper 名、run 名: `<PROJECT>` や `<RUN>`
+- host、cluster、endpoint: `<HOST>` や `<ENDPOINT>`
+- credential、token、API key、private term: 削除または `<SECRET>`
+- 未公開 note、paper text、collaborator 固有情報: 要約または削除
+
+## 推奨 workflow
+
+1. instance root を確認し、必要なら `kansei doctor --root <root>` と `kansei version` を読む。
+2. feedback を `bug`, `docs`, `template`, `provider`, `security`, `ergonomics` のどれかに分類する。
+3. `hops` と `.harnessops/project.toml` が利用できる場合は HarnessOps に委譲する。
+
+   ```powershell
+   hops doctor --check-overlay --check-records
+   hops add-failure --interactive
+   hops route --record <Fid>
+   hops add-feedback --from <Fid> --target kansei
+   hops feedback export --target kansei --sanitize --format github-issue
+   ```
+
+   issue 作成まで進める場合も、まず bundle の title/body と重複候補を確認します。
+
+   ```powershell
+   hops feedback issue create <bundle-path> --repo Nkzono99/kansei
+   ```
+
+   `--confirm-create` 相当の明示確認が無い限り、remote issue は作成しません。
+
+4. `hops` が使えない場合は、GitHub issue body の下書きを作る。`gh issue create` はユーザーが
+   明示した場合だけ実行する。
+
+## Issue 下書き template
+
+```markdown
+## 概要
+
+## 再現手順
+
+## 期待した挙動
+
+## 実際の挙動
+
+## 影響範囲
+
+## 環境
+
+- kansei version:
+- OS:
+- 実行 command:
+
+## サニタイズ確認
+
+- [ ] local path を `<LOCAL_PATH>` に置換した
+- [ ] credential/token/API key を含めていない
+- [ ] 未公開 note、paper text、collaborator 固有情報を含めていない
+```

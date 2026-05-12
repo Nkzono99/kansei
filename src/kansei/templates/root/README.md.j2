@@ -5,6 +5,11 @@
 この workspace は local project registry、provider registry、dashboard、runbook、prompt、
 private knowledge を保持します。project source tree はそれぞれのリポジトリに残します。
 
+Agent 向け skill は `.agents/skills/` にあります。
+
+- `kansei-control-plane`: この instance の確認、計画、update、delegation を安全に行う。
+- `feedback-kansei`: Kansei upstream への feedback をサニタイズして issue 下書きにする。
+
 `kansei init` が作成した local environment を activate します。
 
 ```powershell

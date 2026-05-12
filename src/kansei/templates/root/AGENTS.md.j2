@@ -10,3 +10,6 @@ orchestration state を管理する workspace として扱ってください。
   `kansei update-harness`, HarnessOps CLI 経由の `hops` を使います。
 - `knowledge/`, `projects.toml`, `providers.toml` は private に保ってください。
 - apply の前に plan し、破壊的操作や remote write はユーザーが明示した場合だけ行ってください。
+- instance 操作用の skill は `.agents/skills/kansei-control-plane` にあります。
+- upstream `Nkzono99/kansei` へ issue 化する feedback は `.agents/skills/feedback-kansei` を使い、
+  private data をサニタイズしてから扱ってください。

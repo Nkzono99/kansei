@@ -17,6 +17,8 @@ preview または apply します。
 - `AGENTS.md`
 - `KANSEI.md`
 - `.gitignore`
+- `.agents/skills/kansei-control-plane/**`
+- `.agents/skills/feedback-kansei/**`
 - `--with-codex` 使用時の `.codex/config.toml`
 - `runbooks/_templates/project-runbook.md`
 - `prompts/_templates/delegation.md`

@@ -20,6 +20,7 @@
   kansei
     - init / doctor / status / update-harness / mcp serve
     - template
+    - instance-local agent skill
     - schema
     - safe update engine
     - provider orchestration
@@ -34,6 +35,7 @@ private local instance:
     - HPC endpoint metadata
     - unpublished paper notes
     - private Codex/MCP config
+    - instance-local agent skill
 ```
 
 `Kansei` は「プロジェクトを管理するプロジェクト」だが、実装上は「公開CLIで保守される private instance」として扱う。
@@ -539,6 +541,11 @@ kansei/
   .codex/
     config.toml
 
+  .agents/
+    skills/
+      kansei-control-plane/
+      feedback-kansei/
+
   .kansei/
     manifest.toml
     lock.toml
@@ -565,6 +572,8 @@ kansei/
 ```text
 AGENTS.md
 KANSEI.md
+.agents/skills/kansei-control-plane/
+.agents/skills/feedback-kansei/
 runbooks/_templates/
 prompts/_templates/
 schemas/
@@ -1855,6 +1864,7 @@ uv run pytest -q
 ```text
 - kansei init
 - standard template
+- instance-local skill
 - manifest/lock
 - kansei doctor
 - kansei update-harness dry-run

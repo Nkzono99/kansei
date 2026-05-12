@@ -19,13 +19,16 @@ def test_update_harness_dry_run_noop_on_fresh_instance(tmp_path) -> None:
 
 def test_update_harness_creates_missing_managed_file(tmp_path) -> None:
     root = init_instance(tmp_path / "kansei")
-    (root / "KANSEI.md").unlink()
+    (root / ".agents" / "skills" / "feedback-kansei" / "SKILL.md").unlink()
 
     plan = plan_update(root)
-    assert any(action.path == "KANSEI.md" and action.action == "create" for action in plan.actions)
+    assert any(
+        action.path == ".agents/skills/feedback-kansei/SKILL.md" and action.action == "create"
+        for action in plan.actions
+    )
 
     apply_update(plan)
-    assert (root / "KANSEI.md").exists()
+    assert (root / ".agents" / "skills" / "feedback-kansei" / "SKILL.md").exists()
 
 
 def test_update_harness_writes_new_for_user_modified_managed_file(tmp_path) -> None:

@@ -33,6 +33,9 @@ def test_init_creates_private_instance_layout(tmp_path) -> None:
         "providers.toml",
         ".gitignore",
         ".codex/config.toml",
+        ".agents/skills/kansei-control-plane/SKILL.md",
+        ".agents/skills/kansei-control-plane/scripts/check_instance.py",
+        ".agents/skills/feedback-kansei/SKILL.md",
         ".kansei/manifest.toml",
         ".kansei/lock.toml",
         "knowledge/profile.md",
@@ -46,6 +49,8 @@ def test_init_creates_private_instance_layout(tmp_path) -> None:
     lock = tomllib.loads((target / ".kansei" / "lock.toml").read_text(encoding="utf-8"))
     locked_paths = {item["path"] for item in lock["managed_files"]}
     assert "AGENTS.md" in locked_paths
+    assert ".agents/skills/kansei-control-plane/SKILL.md" in locked_paths
+    assert ".agents/skills/feedback-kansei/SKILL.md" in locked_paths
     assert ".codex/config.toml" in locked_paths
     providers = tomllib.loads((target / "providers.toml").read_text(encoding="utf-8"))
     assert "harnessops" in providers["providers"]

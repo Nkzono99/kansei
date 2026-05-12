@@ -31,6 +31,8 @@ uvx --from kansei kansei init .tmp/kansei-demo --git --with-codex --with-mcp
 - `providers.toml`: provider registry。
 - `knowledge/`, `runbooks/`, `prompts/`, `dashboards/`: private な運用領域。
 - `.kansei/manifest.toml` と `.kansei/lock.toml`: safe update 用の package-managed metadata。
+- `.agents/skills/kansei-control-plane`: instance 操作用の Codex skill。
+- `.agents/skills/feedback-kansei`: Kansei upstream への feedback をサニタイズする skill。
 - `.codex/config.toml`: `--with-codex` を渡した場合だけ生成されます。
 - `.venv/`: local Kansei environment。git 管理外です。
 

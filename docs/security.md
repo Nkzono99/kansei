@@ -19,6 +19,7 @@ package リポジトリは public ですが、Kansei は既定では private で
 - user-owned file の書き込み
 - instance-local な `.venv` の作成または更新
 - generated `.codex/config.toml` の上書き
+- `.agents/skills/feedback-kansei` による GitHub issue 作成
 - remote write
 - Slurm submit/cancel/delete
 - archive/delete

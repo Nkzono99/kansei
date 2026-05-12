@@ -23,8 +23,10 @@ private local control plane を保守する公開 Python package / CLI です。
 - package source は `src/kansei` に置きます。
 - CLI command は `src/kansei/cli/commands` に置きます。
 - private instance 用 template は `src/kansei/templates` に置きます。
-- Codex agent skill は `.agents/skills/kansei-control-plane` にあります。`SKILL.md` は簡潔に保ち、
-  手順の詳細は `references/`、繰り返し使う deterministic helper は `scripts/` に置きます。
+- このリポジトリの保守用 Codex skill は `.agents/skills/kansei-repository-maintainer` にあります。
+- `kansei init` で生成する instance-local skill は `src/kansei/templates/agents/skills/` に置きます。
+  `SKILL.md` は簡潔に保ち、手順の詳細は `references/`、繰り返し使う deterministic helper は
+  `scripts/` に置きます。
 - test は `tests` に置き、生成する Kansei instance には temporary directory を使います。
 - TOML の読み書きには structured API を使います。registry や lock file を ad hoc な文字列処理で
   書き換えないでください。
@@ -32,7 +34,7 @@ private local control plane を保守する公開 Python package / CLI です。
 ## Agent ワークフロー
 
 1. 計画や編集の前にリポジトリの状態と関連 file を確認します。
-2. Kansei instance 作業では `kansei-control-plane` skill を procedural harness として使い、
+2. Kansei instance 作業では生成 instance 側の `kansei-control-plane` skill を procedural harness として使い、
    直接 file を編集するより CLI preview を優先します。
 3. 生成/demo instance は `.tmp/` または別の disposable directory に置きます。
 4. current task でユーザーが明示しない限り、remote provider への接続、HPC job の submit/cancel、
@@ -57,6 +59,6 @@ uv run --directory . kansei update-harness --root .tmp/kansei-demo
 
 ## Agent ハーネス
 
-このリポジトリには `.agents/skills/kansei-control-plane` に version 管理された Codex skill があります。
-private Kansei instance を扱うとき、private state を public package に漏らさないための
-procedural harness として使ってください。
+このリポジトリには `.agents/skills/kansei-repository-maintainer` に repo-local な Codex skill があります。
+private Kansei instance に配る skill は `src/kansei/templates/agents/skills/` に version 管理し、
+`kansei init` と `kansei update-harness` で instance 側へ展開します。
