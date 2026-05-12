@@ -1,0 +1,34 @@
+{
+  "files.exclude": {
+    "**/.coverage": true,
+    "**/.mypy_cache": true,
+    "**/.pytest_cache": true,
+    "**/.ruff_cache": true,
+    "**/__pycache__": true,
+    "**/*.egg-info": true,
+    "**/build": true,
+    "**/dist": true,
+    "**/htmlcov": true
+  },
+  "search.exclude": {
+    "**/.coverage": true,
+    "**/.mypy_cache": true,
+    "**/.pytest_cache": true,
+    "**/.ruff_cache": true,
+    "**/__pycache__": true,
+    "**/*.egg-info": true,
+    "**/build": true,
+    "**/dist": true,
+    "**/htmlcov": true
+  },
+  "files.watcherExclude": {
+    "**/.mypy_cache/**": true,
+    "**/.pytest_cache/**": true,
+    "**/.ruff_cache/**": true,
+    "**/__pycache__/**": true,
+    "**/*.egg-info/**": true,
+    "**/build/**": true,
+    "**/dist/**": true,
+    "**/htmlcov/**": true
+  }
+}
