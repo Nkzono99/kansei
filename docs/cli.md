@@ -7,15 +7,33 @@ or any subcommand's `--help` for the exact current Typer output.
 
 ```powershell
 kansei init PATH [--git] [--with-codex] [--with-mcp] [--force]
+  [--harnessops/--no-harnessops] [--harnessops-profile PROFILE]
+  [--with-harnessops-agent-bridge] [--require-harnessops]
 kansei doctor [--root PATH] [--json] [--check-mcp] [--check-codex]
 kansei status [--project ID] [--priority A|B|C|hold] [--json]
 kansei search QUERY [--limit N]
 kansei delegate PROJECT_ID TASK [--json] [--exec]
 kansei update-harness [--root PATH] [--apply]
+  [--harnessops/--no-harnessops] [--harnessops-profile PROFILE]
+  [--with-harnessops-agent-bridge] [--require-harnessops]
 kansei backup [--root PATH] [--output PATH]
 kansei migrate [--root PATH] [--json]
 kansei version
 ```
+
+## HarnessOps Chaining
+
+`kansei init` chains to `hops init --profile generic-code` by default when the
+`hops` command is available. `kansei update-harness` chains to
+`hops update-harness`; dry runs use `hops update-harness --dry-run`, and older
+instances without `.harnessops/project.toml` first receive a `hops init` dry run
+or apply, matching the Kansei command mode.
+
+Use `--no-harnessops` to skip the chained call. Use `--require-harnessops` when
+automation should fail instead of warning if `hops` cannot be found. If `hops`
+is not on `PATH`, set `KANSEI_HOPS_COMMAND` or set `KANSEI_HARNESSOPS_SOURCE` to
+a local HarnessOps checkout so Kansei can run `uvx --isolated --from <source>
+hops ...`.
 
 ## Project Commands
 

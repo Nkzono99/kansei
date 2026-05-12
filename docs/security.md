@@ -24,6 +24,7 @@ explicit user intent include:
 - archive/delete
 - manuscript rewrite
 - harness update apply
+- HarnessOps chained updates through `hops`
 
 ## MCP
 
@@ -34,3 +35,7 @@ control plan. SSH tunnels are preferred for remote provider access.
 
 If local friction is exported upstream, sanitize it first. Keep reproducible
 generic failure details, not private project data.
+
+HarnessOps overlay writes remain `hops`-owned. Kansei may invoke `hops init` or
+`hops update-harness`, but it must not directly restructure `.harnessops/`,
+`harness-feedback/`, or `harness-lab/`.

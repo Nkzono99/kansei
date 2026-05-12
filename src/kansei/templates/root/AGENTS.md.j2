@@ -6,7 +6,8 @@ a monorepo for downstream projects.
 - Read project and provider state before planning changes.
 - Use `kansei` CLI or MCP tools for persistent Kansei state changes.
 - Do not directly reorganize registered project roots from this workspace.
+- Do not directly reorganize `.harnessops/` or `harness-feedback/`; use `hops`
+  through `kansei init`, `kansei update-harness`, or the HarnessOps CLI.
 - Keep `knowledge/`, `projects.toml`, and `providers.toml` private.
 - Plan before apply, and avoid destructive or remote-write actions unless the
   user explicitly asks for them.
-

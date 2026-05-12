@@ -5,6 +5,11 @@
 It updates only files that Kansei knows how to manage, using `.kansei/lock.toml`
 checksums to avoid overwriting local edits.
 
+Kansei also delegates HarnessOps overlay maintenance to `hops` when the command
+is available. Dry runs call `hops update-harness --dry-run`; `--apply` calls
+`hops update-harness`. If an older instance has no `.harnessops/project.toml`,
+Kansei previews or applies `hops init --profile generic-code` first.
+
 ## Managed Files
 
 Current lock-tracked files created by `kansei init` include:
@@ -40,6 +45,9 @@ Dry-run preview is the default:
 kansei update-harness
 ```
 
+This also previews the HarnessOps chained call unless `--no-harnessops` is
+passed.
+
 Apply only after reviewing the plan:
 
 ```powershell
@@ -49,6 +57,21 @@ kansei update-harness --apply
 If a managed file still matches its lock checksum, Kansei can update it in
 place. If a managed file has local edits, Kansei writes the new template beside
 it as `<path>.new` and leaves the local file untouched.
+
+HarnessOps files are never rewritten directly by Kansei. The apply path invokes
+`hops init` or `hops update-harness`, so `.harnessops/`,
+`harness-feedback/`, and `harness-lab/` remain owned by HarnessOps.
+
+## Availability
+
+Kansei resolves `hops` in this order:
+
+1. `KANSEI_HOPS_COMMAND`
+2. `hops` on `PATH`
+3. `uvx --isolated --from <KANSEI_HARNESSOPS_SOURCE> hops`
+
+If none are available, Kansei prints a warning and continues. Use
+`--require-harnessops` to make that a command failure.
 
 ## Generated Config
 

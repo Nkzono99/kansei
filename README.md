@@ -62,6 +62,12 @@ Apply only when the plan is expected:
 kansei update-harness --apply
 ```
 
+When HarnessOps is available as `hops`, `kansei init` also runs `hops init`
+inside the generated instance, and `kansei update-harness` chains to
+`hops update-harness`. If `hops` is not on `PATH`, set
+`KANSEI_HARNESSOPS_SOURCE` to a local HarnessOps checkout or use
+`--no-harnessops` to skip the chained call.
+
 ## Core Commands
 
 - `kansei init`: create a private local instance.
@@ -99,6 +105,8 @@ job state into the control plane.
   rewrite workflows are not automatic in v0.1.
 - SSH tunnel commands are printed by default; foreground execution requires
   `--exec`.
+- HarnessOps integration is delegated to `hops`; Kansei does not directly
+  reshape `.harnessops/`, `harness-feedback/`, or `harness-lab/`.
 
 ## Agent Guidance
 

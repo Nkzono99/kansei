@@ -33,6 +33,17 @@ The generated instance is private workspace state. Do not copy real local paths,
 credentials, unpublished notes, or collaborator-specific details back into the
 public package repository.
 
+If HarnessOps is available as `hops`, initialization also runs
+`hops init --profile generic-code` inside the generated instance. When working
+from a local HarnessOps checkout instead of an installed command, set:
+
+```powershell
+$env:KANSEI_HARNESSOPS_SOURCE = "C:\path\to\harnessops"
+```
+
+Use `--no-harnessops` when you want a plain Kansei instance without the
+HarnessOps feedback overlay.
+
 ## Validate the instance
 
 ```powershell
@@ -101,7 +112,9 @@ uv run --directory ..\.. kansei update-harness --apply
 ```
 
 Dashboard commands preview Markdown unless `--write` is passed.
-`update-harness` is a dry run unless `--apply` is passed.
+`update-harness` is a dry run unless `--apply` is passed. The HarnessOps chained
+call follows the same mode: dry runs call `hops update-harness --dry-run`, while
+apply calls `hops update-harness`.
 
 ## Optional MCP setup
 

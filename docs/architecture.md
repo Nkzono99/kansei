@@ -54,6 +54,10 @@ The CLI is the source of truth for Kansei state changes. MCP tools and Codex
 prompts should call the CLI or mirror CLI behavior rather than write a second
 state model.
 
+HarnessOps state is a delegated boundary. Kansei invokes `hops init` and
+`hops update-harness` as subprocesses for generated instances, but it does not
+directly author `.harnessops/`, `harness-feedback/`, or `harness-lab/`.
+
 Typical flow:
 
 ```text

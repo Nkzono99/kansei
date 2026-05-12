@@ -6,3 +6,7 @@ This workspace keeps local project registry, provider registry, dashboards,
 runbooks, prompts, and private knowledge. Project source trees remain in their
 own repositories.
 
+If HarnessOps was available during `kansei init`, this instance also has a
+`harness-feedback/` overlay managed by `hops`. Update it through
+`kansei update-harness` or `hops update-harness`; do not manually restructure
+`.harnessops/` or `harness-feedback/`.
