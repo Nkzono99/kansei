@@ -57,3 +57,12 @@ def _ssh_tunnel_command(spec: str) -> list[str]:
         raise typer.BadParameter("ssh_tunnel must be host:local_port:remote_host:remote_port")
     host, local_port, remote_host, remote_port = parts
     return ["ssh", "-N", "-L", f"{local_port}:{remote_host}:{remote_port}", host]
+
+
+@app.command("disconnect")
+def disconnect(provider_id: str) -> None:
+    load_providers().get(provider_id)
+    typer.echo(
+        "No background provider connection is tracked in v0.1. "
+        "Stop any foreground SSH tunnel with Ctrl+C."
+    )

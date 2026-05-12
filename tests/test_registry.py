@@ -133,9 +133,17 @@ def test_project_open_status_and_provider_connect_commands(tmp_path, monkeypatch
     assert status_result.exit_code == 0
     assert '"project_id": "kansei"' in status_result.stdout
 
+    doctor_result = CliRunner().invoke(app, ["project", "doctor", "kansei"])
+    assert doctor_result.exit_code == 0
+    assert '"project_id": "kansei"' in doctor_result.stdout
+
     connect_result = CliRunner().invoke(app, ["provider", "connect", "runops_hpc", "--tunnel"])
     assert connect_result.exit_code == 0
     assert "ssh -N -L 18765:127.0.0.1:18765 hpc-login" in connect_result.stdout
+
+    disconnect_result = CliRunner().invoke(app, ["provider", "disconnect", "runops_hpc"])
+    assert disconnect_result.exit_code == 0
+    assert "No background provider connection" in disconnect_result.stdout
 
 
 def test_delegate_command_prints_safe_plan(tmp_path, monkeypatch) -> None:

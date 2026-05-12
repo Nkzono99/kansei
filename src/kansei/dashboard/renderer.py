@@ -60,6 +60,42 @@ def write_today(root: Path | str | None = None, *, today: date | None = None) ->
     return path
 
 
+def render_weekly(root: Path | str | None = None, *, today: date | None = None) -> str:
+    instance_root = find_instance_root(Path(root) if root is not None else None)
+    current_date = today or date.today()
+    status = workspace_status(instance_root, active=None)
+    projects = load_projects(instance_root).list(active=None)
+    focus_projects = [
+        f"- {project.name} ({project.priority})"
+        for project in projects
+        if project.active and project.priority == "A"
+    ]
+    lines = [
+        f"# Weekly - {current_date.isoformat()}",
+        "",
+        "## Focus Projects",
+        "",
+        *(focus_projects or ["- None"]),
+        "",
+        "## Project Status",
+        "",
+        "| project | provider | status | summary |",
+        "|---|---|---|---|",
+    ]
+    for item in status.projects:
+        lines.append(f"| {item.project_id} | {item.provider_id} | {item.status} | {item.summary} |")
+    lines.extend(["", "## Decisions", "", "- "])
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def write_weekly(root: Path | str | None = None, *, today: date | None = None) -> Path:
+    instance_root = find_instance_root(Path(root) if root is not None else None)
+    path = instance_root / "dashboards" / "weekly.md"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(render_weekly(instance_root, today=today), encoding="utf-8")
+    return path
+
+
 def focus_lines(status: WorkspaceStatus) -> list[str]:
     attention = [
         item for item in status.projects if item.status in {"error", "dirty", "warning", "skipped"}

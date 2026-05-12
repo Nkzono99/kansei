@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
@@ -122,9 +123,43 @@ def _validate_providers(data: dict[str, object], errors: list[str]) -> None:
 
 def doctor(
     root: Annotated[Path | None, typer.Option("--root", help="Kansei instance root.")] = None,
+    check_projects: Annotated[
+        bool,
+        typer.Option("--check-projects", help="Validate project registry."),
+    ] = True,
+    check_providers: Annotated[
+        bool,
+        typer.Option("--check-providers", help="Validate provider registry."),
+    ] = True,
+    check_mcp: Annotated[bool, typer.Option("--check-mcp", help="Validate MCP config.")] = False,
+    check_codex: Annotated[
+        bool,
+        typer.Option("--check-codex", help="Validate Codex config."),
+    ] = False,
+    json_output: Annotated[bool, typer.Option("--json", help="Print JSON output.")] = False,
 ) -> None:
     instance_root = root.resolve() if root else find_instance_root()
     report = run_doctor(instance_root)
+    if json_output:
+        typer.echo(
+            json.dumps(
+                {
+                    "ok": report.ok,
+                    "errors": report.errors,
+                    "warnings": report.warnings,
+                    "checks": {
+                        "projects": check_projects,
+                        "providers": check_providers,
+                        "mcp": check_mcp,
+                        "codex": check_codex,
+                    },
+                },
+                indent=2,
+            )
+        )
+        if not report.ok:
+            raise typer.Exit(1)
+        return
     for warning in report.warnings:
         typer.echo(f"warning: {warning}")
     for error in report.errors:

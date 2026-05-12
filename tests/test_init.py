@@ -44,3 +44,18 @@ def test_init_refuses_non_empty_non_instance(tmp_path) -> None:
     result = CliRunner().invoke(app, ["init", str(target)])
 
     assert result.exit_code != 0
+
+
+def test_backup_and_migrate_commands(tmp_path) -> None:
+    target = tmp_path / "kansei-home"
+    init_result = CliRunner().invoke(app, ["init", str(target), "--with-mcp"])
+    assert init_result.exit_code == 0
+
+    backup_result = CliRunner().invoke(app, ["backup", "--root", str(target)])
+    assert backup_result.exit_code == 0
+    backup_path = target / ".kansei" / "backups"
+    assert any(path.suffix == ".zip" for path in backup_path.iterdir())
+
+    migrate_result = CliRunner().invoke(app, ["migrate", "--root", str(target), "--json"])
+    assert migrate_result.exit_code == 0
+    assert '"pending": []' in migrate_result.stdout

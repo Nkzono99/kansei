@@ -4,7 +4,7 @@ import subprocess
 from datetime import date
 
 from kansei.dashboard.generator import workspace_status
-from kansei.dashboard.renderer import render_today, write_today
+from kansei.dashboard.renderer import render_today, render_weekly, write_today
 from kansei.knowledge.search import search_knowledge
 
 
@@ -80,6 +80,38 @@ active = true
     path = write_today(tmp_path, today=date(2026, 5, 12))
     assert path == tmp_path / "dashboards" / "today.md"
     assert path.read_text(encoding="utf-8") == rendered
+
+
+def test_weekly_dashboard_preview(tmp_path) -> None:
+    (tmp_path / "kansei.toml").write_text('schema_version = "0.1"\n', encoding="utf-8")
+    (tmp_path / "providers.toml").write_text(
+        """
+[providers.generic_code]
+type = "local"
+mode = "cli"
+command = "git"
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "projects.toml").write_text(
+        """
+[[projects]]
+id = "kansei"
+name = "Kansei"
+kind = "management"
+provider = "generic-code"
+location = "local"
+path = "."
+priority = "A"
+active = true
+""",
+        encoding="utf-8",
+    )
+
+    rendered = render_weekly(tmp_path, today=date(2026, 5, 12))
+
+    assert "# Weekly - 2026-05-12" in rendered
+    assert "Kansei (A)" in rendered
 
 
 def test_knowledge_search_is_scoped_to_local_knowledge_surfaces(tmp_path) -> None:

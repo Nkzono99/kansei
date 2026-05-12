@@ -68,6 +68,18 @@ def project_status(project_id: str) -> None:
     raise typer.BadParameter(f"unknown project: {project_id}")
 
 
+@app.command("doctor")
+def project_doctor(project_id: str) -> None:
+    status = workspace_status(active=None)
+    for project in status.projects:
+        if project.project_id == project_id:
+            typer.echo(json.dumps(project.model_dump(), indent=2))
+            if project.status == "error":
+                raise typer.Exit(5)
+            return
+    raise typer.BadParameter(f"unknown project: {project_id}")
+
+
 @app.command("add")
 def add_project_command(
     id: Annotated[str, typer.Option("--id")],

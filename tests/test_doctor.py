@@ -34,3 +34,13 @@ def test_doctor_warns_for_modified_managed_file(tmp_path) -> None:
 
     assert report.ok
     assert "managed file has local edits: AGENTS.md" in report.warnings
+
+
+def test_doctor_json_options(tmp_path) -> None:
+    root = init_instance(tmp_path / "kansei")
+
+    result = CliRunner().invoke(app, ["doctor", "--root", str(root), "--json", "--check-mcp"])
+
+    assert result.exit_code == 0
+    assert '"ok": true' in result.stdout
+    assert '"mcp": true' in result.stdout
