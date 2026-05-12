@@ -34,6 +34,8 @@ def test_init_creates_private_instance_layout(tmp_path) -> None:
     locked_paths = {item["path"] for item in lock["managed_files"]}
     assert "AGENTS.md" in locked_paths
     assert ".codex/config.toml" in locked_paths
+    providers = tomllib.loads((target / "providers.toml").read_text(encoding="utf-8"))
+    assert "harnessops" in providers["providers"]
 
 
 def test_init_refuses_non_empty_non_instance(tmp_path) -> None:

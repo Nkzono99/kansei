@@ -145,6 +145,10 @@ def test_project_open_status_and_provider_connect_commands(tmp_path, monkeypatch
     assert disconnect_result.exit_code == 0
     assert "No background provider connection" in disconnect_result.stdout
 
+    paperops_doctor = CliRunner().invoke(app, ["provider", "doctor", "--provider-id", "paperops"])
+    assert paperops_doctor.exit_code == 0
+    assert '"provider_id": "paperops"' in paperops_doctor.stdout
+
 
 def test_delegate_command_prints_safe_plan(tmp_path, monkeypatch) -> None:
     root = init_instance(tmp_path / "kansei", with_mcp=True)

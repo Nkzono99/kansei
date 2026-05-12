@@ -10,6 +10,12 @@ type = "local"
 mode = "cli"
 command = "git"
 
+[providers.harnessops]
+type = "local"
+mode = "cli"
+command = "hops"
+required = false
+
 [providers.paperops]
 type = "mcp"
 mode = "stdio"
@@ -24,4 +30,3 @@ url = "http://127.0.0.1:18765/mcp"
 ssh_tunnel = "hpc-login:18765:127.0.0.1:18765"
 token_env = "RUNOPS_HPC_MCP_TOKEN"
 required = false
-

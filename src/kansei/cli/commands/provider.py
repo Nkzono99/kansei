@@ -7,7 +7,7 @@ from typing import Annotated
 
 import typer
 
-from kansei.providers.generic_code import GenericCodeProvider
+from kansei.registry.discovery import get_builtin_provider
 from kansei.registry.providers import load_providers
 
 app = typer.Typer(help="Inspect provider registry.", no_args_is_help=True)
@@ -25,7 +25,7 @@ def list_providers() -> None:
 
 @app.command("doctor")
 def doctor(provider_id: str = "generic-code") -> None:
-    health = GenericCodeProvider(provider_id=provider_id).health()
+    health = get_builtin_provider(provider_id).health()
     typer.echo(json.dumps(health.model_dump(), indent=2))
 
 
