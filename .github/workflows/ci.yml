@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Run tests
+        run: uv run --extra dev pytest -q
+      - name: Run lint
+        run: uv run --extra dev ruff check .
+      - name: Run type check
+        run: uv run --extra dev mypy src\kansei
+      - name: Build package
+        run: uv build
