@@ -1,0 +1,14 @@
+schema_version = "0.1"
+
+[harness]
+provider = "target-harness"
+kind = "target-repository"
+version = "0.1.0"
+
+[commands]
+doctor = "hops doctor"
+migrate = "hops migrate"
+version = "hops version"
+
+[harnessops]
+recommended_profile = "target-harness"
