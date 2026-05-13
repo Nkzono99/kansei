@@ -2,8 +2,8 @@ approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 
 [mcp_servers.kansei]
-command = "kansei"
-args = ["mcp", "serve", "--transport", "stdio"]
+command = "uvx"
+args = ["--from", "kansei", "kansei", "mcp", "serve", "--transport", "stdio"]
 cwd = "."
 startup_timeout_sec = 20
 tool_timeout_sec = 120
@@ -40,4 +40,3 @@ disabled_tools = [
   "runops.run.delete",
   "runops.fs.delete",
 ]
-

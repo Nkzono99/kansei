@@ -18,7 +18,7 @@ def migrate(
     instance_root = root.resolve() if root else find_instance_root()
     manifest = read_manifest(instance_root)
     harness = cast(dict[str, Any], manifest.get("harness", {}))
-    report = {
+    report: dict[str, Any] = {
         "root": str(instance_root),
         "status": "ok",
         "schema_version": manifest.get("schema_version"),

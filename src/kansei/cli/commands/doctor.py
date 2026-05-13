@@ -8,6 +8,7 @@ from typing import Annotated, Any
 
 import typer
 
+from kansei.cli.update_notice import maybe_emit_update_notice
 from kansei.core.instance import find_instance_root
 from kansei.core.lockfile import load_lock, sha256_file
 from kansei.core.manifest import MANIFEST_PATH
@@ -167,3 +168,4 @@ def doctor(
     if not report.ok:
         raise typer.Exit(1)
     typer.echo(f"Kansei doctor passed: {instance_root}")
+    maybe_emit_update_notice(command="doctor", root=instance_root)

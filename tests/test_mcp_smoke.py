@@ -119,6 +119,9 @@ def test_codex_mcp_config_is_generated_from_providers(tmp_path: Path) -> None:
     plan = plan_codex_config(root)
 
     assert "[mcp_servers.kansei]" in plan.content
+    assert 'command = "uvx"' in plan.content
+    for arg in ("--from", "kansei", "mcp", "serve", "--transport", "stdio"):
+        assert f'"{arg}"' in plan.content
     assert "[mcp_servers.paperops]" in plan.content
     assert "[mcp_servers.runops_hpc]" in plan.content
     assert 'url = "http://127.0.0.1:18765/mcp"' in plan.content

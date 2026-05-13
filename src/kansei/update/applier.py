@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from kansei.core.instance import TEMPLATE_VERSION
 from kansei.core.lockfile import load_lock, write_lock
+from kansei.core.manifest import record_applied_harness_metadata
 from kansei.update.planner import UpdatePlan, managed_file_for
 
 
@@ -22,3 +24,4 @@ def apply_update(plan: UpdatePlan) -> None:
             destination.write_bytes(action.content.encode("utf-8"))
 
     write_lock(plan.root, lock)
+    record_applied_harness_metadata(plan.root, template_version=TEMPLATE_VERSION)

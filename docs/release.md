@@ -9,7 +9,7 @@ backup、read/plan-oriented な MCP surface です。
 実装済み:
 
 - package template から private local instance を作る `kansei init`。
-- `.venv` の作成と project-local な Kansei インストールを行う init bootstrap。
+- `uvx --from kansei kansei <command>` を標準にした init flow。
 - layout、TOML、registry、managed-file を検証する `kansei doctor`。
 - 登録済み project を list/show/add/open/check する `kansei project` command。
 - provider を list し、built-in provider health を確認し、foreground SSH tunnel を

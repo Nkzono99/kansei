@@ -52,8 +52,8 @@ PATH/
 
 instance は運用 metadata と local knowledge を保存します。target project の
 source tree、manuscript、Slurm output、provider 側の状態を取り込むものでは
-ありません。`kansei init` は既定で git 管理外の `.venv` も作成し、bootstrap 後に
-instance 自身の `kansei` command を実行できるようにします。
+ありません。`kansei init` は既定で project-local な Kansei `.venv` を作らず、
+instance 自身の CLI 実行は `uvx --from kansei kansei <command>` を標準にします。
 `.agents/skills/` には instance 操作用の `kansei-control-plane` と、upstream feedback 用の
 `feedback-kansei` を managed file として配ります。
 
@@ -87,3 +87,14 @@ agent or user
   `kansei mcp config --write --force` から作る `.codex/config.toml`。
 
 正確な update の挙動は [update-harness](update-harness.md) を参照してください。
+
+## Migration horizon
+
+Kansei は `uvx --from kansei==<version>` で過去 release の CLI を exact に呼べるため、
+後方互換性を最新 release に無限集積しない方針です。古い instance の更新は
+`.kansei/manifest.toml` の `harness.kansei_version` を起点に、minor/major checkpoint を
+順番に踏む versioned upgrade chain で行います。
+
+最新 release は chain の planner/runner と、chain 導入前の instance を最初の checkpoint へ
+運ぶ bootstrap shim を担当します。各 checkpoint release は直前の対応範囲から自分の layout へ
+移す migration だけを保持し、古い migration は horizon policy に従って凍結または退役できます。

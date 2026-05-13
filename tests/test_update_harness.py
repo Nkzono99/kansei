@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import tomllib
+
 from typer.testing import CliRunner
 
 from kansei.cli.main import app
@@ -53,3 +55,26 @@ def test_update_harness_does_not_touch_user_owned_registry(tmp_path) -> None:
     assert result.exit_code == 0
     assert "# user note" in projects.read_text(encoding="utf-8")
     assert not (root / "projects.toml.new").exists()
+
+
+def test_update_harness_apply_refreshes_manifest_metadata(tmp_path) -> None:
+    root = init_instance(tmp_path / "kansei")
+    manifest_path = root / ".kansei" / "manifest.toml"
+    manifest_path.write_text(
+        manifest_path.read_text(encoding="utf-8")
+        .replace('kansei_version = "0.1.0"', 'kansei_version = "0.0.1"')
+        .replace('runner = "uvx"', 'runner = "venv"')
+        .replace('command = "uvx --from kansei kansei"', 'command = "kansei"'),
+        encoding="utf-8",
+    )
+
+    result = CliRunner().invoke(
+        app,
+        ["update-harness", "--root", str(root), "--apply", "--no-harnessops"],
+    )
+
+    assert result.exit_code == 0, result.stdout
+    manifest = tomllib.loads(manifest_path.read_text(encoding="utf-8"))
+    assert manifest["harness"]["kansei_version"] == "0.1.0"
+    assert manifest["cli"]["runner"] == "uvx"
+    assert manifest["cli"]["command"] == "uvx --from kansei kansei"

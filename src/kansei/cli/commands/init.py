@@ -5,6 +5,7 @@ from typing import Annotated
 
 import typer
 
+from kansei.cli.update_notice import maybe_emit_update_notice
 from kansei.core.bootstrap import (
     DEFAULT_INSTALL_SPEC,
     BootstrapError,
@@ -19,6 +20,7 @@ from kansei.core.harnessops import (
     run_harnessops_init,
 )
 from kansei.core.instance import init_instance
+from kansei.core.manifest import kansei_uvx_command
 
 app = typer.Typer(help="Initialize a private Kansei instance.")
 
@@ -43,12 +45,15 @@ def init(
         bool,
         typer.Option(
             "--bootstrap/--no-bootstrap",
-            help="Create .venv and install Kansei into the generated instance.",
+            help="Legacy opt-in: create .venv and install Kansei into the generated instance.",
         ),
-    ] = True,
+    ] = False,
     kansei_install_spec: Annotated[
         str,
-        typer.Option("--kansei-install-spec", help="Package spec installed into .venv."),
+        typer.Option(
+            "--kansei-install-spec",
+            help="Legacy package spec installed into .venv when --bootstrap is used.",
+        ),
     ] = DEFAULT_INSTALL_SPEC,
     require_bootstrap: Annotated[
         bool,
@@ -105,8 +110,11 @@ def init(
         except BootstrapError as exc:
             typer.echo(str(exc), err=True)
             raise typer.Exit(1) from exc
+    else:
+        _echo_uvx_next_steps(root)
 
     if not harnessops:
+        maybe_emit_update_notice(command="init", root=root)
         return
     try:
         for result in run_harnessops_init(
@@ -119,6 +127,7 @@ def init(
     except HarnessOpsError as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
+    maybe_emit_update_notice(command="init", root=root)
 
 
 def _echo_harnessops_result(result: HarnessOpsResult) -> None:
@@ -140,3 +149,8 @@ def _echo_bootstrap_result(result: BootstrapResult) -> None:
     for warning in result.warnings:
         typer.echo(f"Bootstrap warning: {warning}", err=True)
     typer.echo(f"Bootstrap next: {result.activation_hint}")
+
+
+def _echo_uvx_next_steps(root: Path) -> None:
+    typer.echo(f"Next: cd {root}")
+    typer.echo(f"Next: {kansei_uvx_command('doctor')}")

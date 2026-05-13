@@ -52,7 +52,13 @@ def test_init_creates_private_instance_layout(tmp_path) -> None:
     assert ".agents/skills/kansei-control-plane/SKILL.md" in locked_paths
     assert ".agents/skills/feedback-kansei/SKILL.md" in locked_paths
     assert ".codex/config.toml" in locked_paths
+    manifest = tomllib.loads((target / ".kansei" / "manifest.toml").read_text(encoding="utf-8"))
+    assert manifest["cli"]["runner"] == "uvx"
+    assert manifest["cli"]["command"] == "uvx --from kansei kansei"
+    assert manifest["harness"]["kansei_version"] == "0.1.0"
     providers = tomllib.loads((target / "providers.toml").read_text(encoding="utf-8"))
+    assert providers["providers"]["kansei"]["command"] == "uvx"
+    assert providers["providers"]["kansei"]["args"] == ["--from", "kansei", "kansei"]
     assert "harnessops" in providers["providers"]
 
 
@@ -84,7 +90,22 @@ def test_backup_and_migrate_commands(tmp_path) -> None:
     assert '"pending": []' in migrate_result.stdout
 
 
-def test_init_bootstraps_local_venv_by_default(tmp_path, monkeypatch) -> None:
+def test_init_uses_uvx_flow_by_default(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(
+        init_command,
+        "bootstrap_environment",
+        lambda *args, **kwargs: (_ for _ in ()).throw(AssertionError("bootstrap should not run")),
+    )
+
+    target = tmp_path / "kansei-home"
+    result = CliRunner().invoke(app, ["init", str(target), "--no-harnessops"])
+
+    assert result.exit_code == 0, result.stdout
+    assert "Next: uvx --from kansei kansei doctor" in result.stdout
+    assert not (target / ".venv").exists()
+
+
+def test_init_can_bootstrap_legacy_local_venv(tmp_path, monkeypatch) -> None:
     calls: list[tuple[str, bool]] = []
 
     def fake_bootstrap(root, *, install_spec: str, required: bool):  # type: ignore[no-untyped-def]
@@ -98,7 +119,10 @@ def test_init_bootstraps_local_venv_by_default(tmp_path, monkeypatch) -> None:
 
     monkeypatch.setattr(init_command, "bootstrap_environment", fake_bootstrap)
 
-    result = CliRunner().invoke(app, ["init", str(tmp_path / "kansei-home"), "--no-harnessops"])
+    result = CliRunner().invoke(
+        app,
+        ["init", str(tmp_path / "kansei-home"), "--bootstrap", "--no-harnessops"],
+    )
 
     assert result.exit_code == 0, result.stdout
     assert calls == [("kansei==0.1.0", False)]

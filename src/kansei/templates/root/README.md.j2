@@ -10,13 +10,13 @@ Agent 向け skill は `.agents/skills/` にあります。
 - `kansei-control-plane`: この instance の確認、計画、update、delegation を安全に行う。
 - `feedback-kansei`: Kansei upstream への feedback をサニタイズして issue 下書きにする。
 
-`kansei init` が作成した local environment を activate します。
+標準の CLI 実行は `uvx --from kansei kansei ...` です。project-local な
+Kansei `.venv` は不要です。
 
 ```powershell
-.venv\Scripts\activate
-kansei doctor
+uvx --from kansei kansei doctor
 ```
 
 `kansei init` 実行時に HarnessOps が利用できた場合、この instance には `hops` が管理する
-`harness-feedback/` overlay もあります。更新は `kansei update-harness` または
-`hops update-harness` で行い、`.harnessops/` や `harness-feedback/` を手で組み替えないでください。
+`harness-feedback/` overlay もあります。更新は `uvx --from kansei kansei update-harness`
+または `hops update-harness` で行い、`.harnessops/` や `harness-feedback/` を手で組み替えないでください。

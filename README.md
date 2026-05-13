@@ -36,8 +36,7 @@ uvx --from kansei kansei init ~/work/kansei --git --with-codex --with-mcp
 ```powershell
 kansei init ~/work/kansei --git --with-codex --with-mcp
 cd ~/work/kansei
-.venv\Scripts\activate
-kansei doctor
+uvx --from kansei kansei doctor
 ```
 
 ローカルの code project を登録します。
@@ -60,18 +59,26 @@ kansei mcp inspect
 harness update を preview します。
 
 ```powershell
-kansei update-harness
+uvx --from kansei kansei update-harness
 ```
 
 plan が想定どおりのときだけ適用します。
 
 ```powershell
-kansei update-harness --apply
+uvx --from kansei kansei update-harness --apply
 ```
 
-`kansei init` は instance 内に `.venv` を作成し、そこへ Kansei をインストールします。
-`uvx` がインストールするのは一時的な実行環境だけです。生成された
-instance を自己完結させるのは、この init bootstrap です。HarnessOps が `hops`
+離れた version の instance は、checkpoint ごとに exact package version を呼ぶ
+upgrade chain で更新できます。
+
+```powershell
+uvx --from kansei kansei update-harness --plan
+uvx --from kansei kansei update-harness --apply-chain
+```
+
+標準の CLI 実行は `uvx --from kansei kansei <command>` です。`kansei init` は
+project-local な Kansei `.venv` を既定では作成しません。互換用に必要な場合だけ
+`--bootstrap` で `.venv` と Kansei install を作れます。HarnessOps が `hops`
 として利用できる場合、init は `hops init` も実行します。また、
 `kansei update-harness` は `hops update-harness` に連鎖します。`hops` が
 `PATH` に無い場合は、local HarnessOps checkout を `KANSEI_HARNESSOPS_SOURCE` に
@@ -115,8 +122,8 @@ control plane にコピーしません。
   v0.1 では自動実行されません。
 - SSH tunnel command は既定では表示のみです。実際に foreground 実行するには
   `--exec` が必要です。
-- `.venv` は git 管理外で、再作成可能です。private な運用状態は bootstrap
-  environment ではなく instance file 側に残します。
+- Kansei CLI runtime は `uvx` の一時環境で再取得できます。private な運用状態は
+  runtime environment ではなく instance file 側に残します。
 - HarnessOps 連携は `hops` に委譲します。Kansei が `.harnessops/`,
   `harness-feedback/`, `harness-lab/` を直接組み替えることはありません。
 

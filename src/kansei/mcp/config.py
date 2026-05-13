@@ -11,6 +11,8 @@ from kansei.registry.providers import ProviderConfig, load_providers
 
 CODEX_CONFIG_PATH = Path(".codex") / "config.toml"
 CODEX_CONFIG_TEMPLATE = "generated/providers.toml"
+DEFAULT_KANSEI_COMMAND = "uvx"
+DEFAULT_KANSEI_ARGS = ["--from", "kansei", "kansei"]
 
 
 @dataclass(frozen=True)
@@ -47,8 +49,10 @@ def render_codex_config(root: Path) -> str:
         "sandbox_mode": "workspace-write",
         "mcp_servers": {
             "kansei": {
-                "command": _provider_command(providers.providers.get("kansei"), "kansei"),
-                "args": ["mcp", "serve", "--transport", "stdio"],
+                "command": _provider_command(
+                    providers.providers.get("kansei"), DEFAULT_KANSEI_COMMAND
+                ),
+                "args": _kansei_mcp_args(providers.providers.get("kansei")),
                 "cwd": ".",
                 "startup_timeout_sec": 20,
                 "tool_timeout_sec": 120,
@@ -98,7 +102,8 @@ def _server_summary(root: Path) -> dict[str, dict[str, Any]]:
         "kansei": {
             "mode": "stdio",
             "required": True,
-            "command": _provider_command(providers.providers.get("kansei"), "kansei"),
+            "command": _provider_command(providers.providers.get("kansei"), DEFAULT_KANSEI_COMMAND),
+            "args": _kansei_mcp_args(providers.providers.get("kansei")),
         }
     }
     for provider_id, provider in providers.providers.items():
@@ -153,6 +158,16 @@ def _provider_command(provider: ProviderConfig | None, default: str) -> str:
     if provider and provider.command:
         return provider.command
     return default
+
+
+def _kansei_mcp_args(provider: ProviderConfig | None) -> list[str]:
+    if provider and provider.args:
+        prefix = list(provider.args)
+    elif provider and provider.command and provider.command != DEFAULT_KANSEI_COMMAND:
+        prefix = []
+    else:
+        prefix = list(DEFAULT_KANSEI_ARGS)
+    return [*prefix, "mcp", "serve", "--transport", "stdio"]
 
 
 def _record_lock(plan: CodexConfigPlan) -> None:
