@@ -55,7 +55,7 @@ def test_init_creates_private_instance_layout(tmp_path) -> None:
     manifest = tomllib.loads((target / ".kansei" / "manifest.toml").read_text(encoding="utf-8"))
     assert manifest["cli"]["runner"] == "uvx"
     assert manifest["cli"]["command"] == "uvx --from kansei kansei"
-    assert manifest["harness"]["kansei_version"] == "0.1.0"
+    assert manifest["harness"]["kansei_version"] == "0.2.0"
     providers = tomllib.loads((target / "providers.toml").read_text(encoding="utf-8"))
     assert providers["providers"]["kansei"]["command"] == "uvx"
     assert providers["providers"]["kansei"]["args"] == ["--from", "kansei", "kansei"]
@@ -125,7 +125,7 @@ def test_init_can_bootstrap_legacy_local_venv(tmp_path, monkeypatch) -> None:
     )
 
     assert result.exit_code == 0, result.stdout
-    assert calls == [("kansei==0.1.0", False)]
+    assert calls == [("kansei==0.2.0", False)]
     assert "Bootstrap: created .venv" in result.stdout
     assert "Bootstrap next: .venv\\Scripts\\activate" in result.stdout
 

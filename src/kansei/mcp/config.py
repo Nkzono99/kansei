@@ -175,7 +175,7 @@ def _record_lock(plan: CodexConfigPlan) -> None:
     lock[plan.relative_path] = ManagedFile(
         path=plan.relative_path,
         template=CODEX_CONFIG_TEMPLATE,
-        version="0.1.0",
+        version="0.2.0",
         checksum=sha256_bytes(plan.content.encode("utf-8")),
         file_class="generated",
     )

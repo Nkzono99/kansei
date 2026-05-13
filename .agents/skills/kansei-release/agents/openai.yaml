@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kansei Release"
+  short_description: "Prepare and publish Kansei releases"
+  default_prompt: "Use the Kansei release skill to prepare release notes, bump version, validate, tag, and publish."

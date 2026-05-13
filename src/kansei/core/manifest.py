@@ -22,7 +22,7 @@ def kansei_uvx_command(*args: str, refresh_package: bool = False) -> str:
     return " ".join(_shell_arg(part) for part in command)
 
 
-def default_manifest(root: Path, *, template_version: str = "0.1.0") -> dict[str, Any]:
+def default_manifest(root: Path, *, template_version: str = "0.2.0") -> dict[str, Any]:
     created_at = now_iso()
     return {
         "schema_version": "0.1",

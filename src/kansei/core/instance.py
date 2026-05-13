@@ -15,7 +15,7 @@ from kansei.core.manifest import MANIFEST_PATH, default_manifest, write_manifest
 from kansei.core.time import DEFAULT_TIMEZONE, today
 
 ROOT_MARKERS = ("kansei.toml", str(MANIFEST_PATH))
-TEMPLATE_VERSION = "0.1.0"
+TEMPLATE_VERSION = "0.2.0"
 
 
 @dataclass(frozen=True)

@@ -62,7 +62,7 @@ def test_update_harness_apply_refreshes_manifest_metadata(tmp_path) -> None:
     manifest_path = root / ".kansei" / "manifest.toml"
     manifest_path.write_text(
         manifest_path.read_text(encoding="utf-8")
-        .replace('kansei_version = "0.1.0"', 'kansei_version = "0.0.1"')
+        .replace('kansei_version = "0.2.0"', 'kansei_version = "0.0.1"')
         .replace('runner = "uvx"', 'runner = "venv"')
         .replace('command = "uvx --from kansei kansei"', 'command = "kansei"'),
         encoding="utf-8",
@@ -75,6 +75,6 @@ def test_update_harness_apply_refreshes_manifest_metadata(tmp_path) -> None:
 
     assert result.exit_code == 0, result.stdout
     manifest = tomllib.loads(manifest_path.read_text(encoding="utf-8"))
-    assert manifest["harness"]["kansei_version"] == "0.1.0"
+    assert manifest["harness"]["kansei_version"] == "0.2.0"
     assert manifest["cli"]["runner"] == "uvx"
     assert manifest["cli"]["command"] == "uvx --from kansei kansei"
