@@ -1,6 +1,6 @@
 ---
 name: kansei-release
-description: Release the public Kansei Python package. Use when Codex is asked to prepare Kansei release notes, choose or bump the package version, update release docs, validate the package, commit the release, tag or create a GitHub Release, and publish through the configured PyPI workflow.
+description: Release the public Kansei Python package. Use when Codex is asked to prepare Kansei release notes, choose or bump the package version, update release docs, validate the package, open the release pull request, create a GitHub Release, and publish through the configured PyPI workflow.
 ---
 
 # Kansei Release
@@ -16,6 +16,7 @@ artifacts.
      recent commits.
    - If unrelated user changes are present, do not stage them.
    - Use semantic versioning. Feature releases normally bump minor, patch-only fixes bump patch.
+   - Create a release branch before editing, normally `codex/release-vX.Y.Z`.
 
 2. Update release files.
    - Bump `pyproject.toml` and `src/kansei/__init__.py`.
@@ -31,14 +32,20 @@ artifacts.
    - `uv build`
    - `uv run kansei version`
 
-4. Commit and publish.
+4. Commit and open the release pull request.
    - Stage only release-related files.
    - Commit with `Release vX.Y.Z`.
-   - Push `main` to `origin`.
+   - Push the release branch to `origin`.
+   - Open a pull request into `main` with the release notes and validation summary.
+   - Do not push directly to `main`; `main` is protected and follows GitHub Flow.
+   - Wait for required checks and merge the pull request when authorized by the user.
+
+5. Publish from `main` after the pull request is merged.
+   - Confirm `main` contains the release commit.
    - Create a GitHub Release named `vX.Y.Z` with notes from `docs/release.md`.
    - The `publish-pypi.yml` workflow publishes to PyPI via Trusted Publishing.
 
-5. Verify after release.
+6. Verify after release.
    - Check the GitHub Release exists.
    - Check the publish workflow status if `gh` is available.
    - Leave any follow-up notes in the final response.
@@ -47,6 +54,7 @@ artifacts.
 
 - Do not create a release from a dirty stage that includes unrelated files.
 - Do not rewrite existing release tags. If a tag exists, stop and report it.
+- Do not bypass the protected `main` branch or push release commits directly to it.
 - Do not apply HarnessOps migrations or remote provider writes as part of a Kansei package release
   unless the user explicitly asks.
 - Prefer `gh release create vX.Y.Z --target main --title "Kansei vX.Y.Z" --notes-file <file>`
