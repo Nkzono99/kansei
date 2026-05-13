@@ -12,3 +12,4 @@ build/
 htmlcov/
 .env
 .secrets/
+.harnessops/cache/*.json
