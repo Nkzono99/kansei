@@ -17,6 +17,8 @@ private local control plane を保守する公開 Python package / CLI です。
   source of truth を作らず、CLI の挙動を呼ぶか mirror してください。
 - provider の挙動を追加するときは、まず安全な read/status/plan path を実装します。remote write、
   HPC submit/cancel、delete/archive、manuscript rewrite は明示的な承認を必須にしてください。
+- このリポジトリは GitHub Flow を使います。`main` は protected branch として扱い、直接 push せず、
+  topic branch から Pull Request を作成して required check 通過後に merge してください。
 
 ## 実装規約
 
@@ -39,6 +41,8 @@ private local control plane を保守する公開 Python package / CLI です。
 3. 生成/demo instance は `.tmp/` または別の disposable directory に置きます。
 4. current task でユーザーが明示しない限り、remote provider への接続、HPC job の submit/cancel、
    remote file の delete/archive、manuscript rewrite は行いません。
+5. `main` へ取り込む変更は `codex/...` などの topic branch に commit し、Pull Request を作成して
+   required check を確認してから merge します。`main` への direct push は行いません。
 
 ## 検証
 
