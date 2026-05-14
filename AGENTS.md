@@ -66,3 +66,9 @@ uv run --directory . kansei update-harness --root .tmp/kansei-demo
 このリポジトリには `.agents/skills/kansei-repository-maintainer` に repo-local な Codex skill があります。
 private Kansei instance に配る skill は `src/kansei/templates/agents/skills/` に version 管理し、
 `kansei init` と `kansei update-harness` で instance 側へ展開します。
+
+HarnessOps 操作では、まず `.harnessops/project.toml` で repo role と overlay path を確認してください。
+`.harnessops/`、`harness-lab/`、`harness-feedback/` の構造は手で組み替えず、
+repo-local の `hops-*` skill と `uvx --from harnessops hops ...` を入口にします。
+HarnessOps の更新や bridge drift は `.agents/skills/hops-update-harness` から
+`hops update-harness` に委譲し、更新後は doctor / migrate check を確認してください。

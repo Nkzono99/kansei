@@ -12,4 +12,9 @@ build/
 htmlcov/
 .env
 .secrets/
-.harnessops/cache/
+
+# BEGIN harnessops
+.harnessops/cache/*
+!.harnessops/cache/.gitkeep
+.harnessops/tmp/
+# END harnessops
