@@ -52,7 +52,7 @@ kansei = "kansei.cli.main:app"
 Homepage = "https://github.com/Nkzono99/kansei"
 Repository = "https://github.com/Nkzono99/kansei"
 Issues = "https://github.com/Nkzono99/kansei/issues"
-Documentation = "https://github.com/Nkzono99/kansei/tree/master/docs"
+Documentation = "https://github.com/Nkzono99/kansei/tree/main/docs"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/kansei"]
